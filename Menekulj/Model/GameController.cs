@@ -12,7 +12,7 @@ namespace Menekulj.Model
         private const int delayAmount = 200;
         public byte MatrixSize { get; private set; }
         private static readonly Random rnd = new Random();
-        public Cell[,] Cells{ get; private set;}
+        public Cell[,] Cells { get; private set; }
         public Player Player { get; private set; }
         public List<Enemy> Enemies { get; private set; } = new List<Enemy>();
         private uint mineCount;
@@ -40,7 +40,7 @@ namespace Menekulj.Model
             this.Cells = new Cell[this.MatrixSize, this.MatrixSize];
             this.Enemies.Clear();
             this.Player = new Player(this, 0, 0);
-            this.Enemies.Add(new Enemy(this,  (byte)(this.MatrixSize - 1),0));
+            this.Enemies.Add(new Enemy(this, (byte)(this.MatrixSize - 1), 0));
             this.Enemies.Add(new Enemy(this, (byte)(this.MatrixSize - 1), (byte)(this.MatrixSize - 1)));
 
             List<Position> possibleMineSpots = new List<Position>();
@@ -77,7 +77,7 @@ namespace Menekulj.Model
                     if (this.Cells[i, j] == Cell.Mine)
                     {
                         mines.Add(new Position(i, j));
-                    }   
+                    }
                 }
             }
 
@@ -109,9 +109,9 @@ namespace Menekulj.Model
             timer.Interval = 1000;
             timer.Elapsed += Tick;
             timer.Start();
-            
+
             Running = true;
-            
+
 
         }
 
@@ -122,14 +122,14 @@ namespace Menekulj.Model
 
         public void ChangePlayerDirection(Direction dir)
         {
-            this.lookingDirection=dir;
+            this.lookingDirection = dir;
         }
 
         private void HandleMovement()
         {
             Player.Move(lookingDirection);
 
-            foreach (var enemy in Enemies.Where(x=>!x.Dead))
+            foreach (var enemy in Enemies.Where(x => !x.Dead))
             {
                 enemy.Move(enemy.CalculateMoveDir(Player.Position));
             }
@@ -138,17 +138,6 @@ namespace Menekulj.Model
 
         private bool UpdateCells()
         {
-            if (Cells[Player.Position.Row, Player.Position.Col] == Cell.Empty || Cells[Player.Position.Row, Player.Position.Col] == Cell.Player)
-            {
-                Cells[Player.prevPosition.Row, Player.prevPosition.Col] = Cell.Empty;
-                Cells[Player.Position.Row, Player.Position.Col] = Cell.Player;
-            }
-            else
-            {
-                this.Player.Die();
-                return true;
-            }
-
             foreach (var enemy in Enemies)
             {
                 Cells[enemy.prevPosition.Row, enemy.prevPosition.Col] = Cell.Empty;
@@ -161,25 +150,41 @@ namespace Menekulj.Model
                     continue;
                 }
 
-                if (Cells[Enemies[i].Position.Row, Enemies[i].Position.Col] == Cell.Empty)
+                switch (Cells[Enemies[i].Position.Row, Enemies[i].Position.Col])
                 {
-                    Cells[Enemies[i].Position.Row, Enemies[i].Position.Col] = Cell.Enemy;
-                }
-                else
-                {
-                    if (Cells[Enemies[i].Position.Row, Enemies[i].Position.Col] == Cell.Player)
-                    {
+                    case Cell.Empty:
+                        Cells[Enemies[i].Position.Row, Enemies[i].Position.Col] = Cell.Enemy;
+                        break;
+                    case Cell.Player:
                         this.Player.Die();
                         return true;
-                    }
-                    else
-                    {
+                        break;
+                    case Cell.Enemy:
+                        Cells[Enemies[i].Position.Row, Enemies[i].Position.Col] = Cell.Enemy;
+                        break;
+                    case Cell.Mine:
                         Enemies[i].Die();
                         //Enemies.RemoveAt(i);
                         //--i;
-                    }
+                        break;
+                    default:
+                        break;
                 }
             }
+
+
+            if (Cells[Player.Position.Row, Player.Position.Col] == Cell.Empty || Cells[Player.Position.Row, Player.Position.Col] == Cell.Player)
+            {
+                Cells[Player.prevPosition.Row, Player.prevPosition.Col] = Cell.Empty;
+                Cells[Player.Position.Row, Player.Position.Col] = Cell.Player;
+            }
+            else
+            {
+                this.Player.Die();
+                return true;
+            }
+
+
             return false;
         }
 

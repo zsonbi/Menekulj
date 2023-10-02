@@ -34,9 +34,10 @@
             // NewGameBtn
             // 
             NewGameBtn.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            NewGameBtn.Location = new Point(310, 267);
+            NewGameBtn.Location = new Point(271, 200);
+            NewGameBtn.Margin = new Padding(3, 2, 3, 2);
             NewGameBtn.Name = "NewGameBtn";
-            NewGameBtn.Size = new Size(204, 59);
+            NewGameBtn.Size = new Size(178, 44);
             NewGameBtn.TabIndex = 0;
             NewGameBtn.Text = "New Game";
             NewGameBtn.UseVisualStyleBackColor = true;
@@ -44,15 +45,17 @@
             // 
             // MenekuljWindow
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlDarkDark;
             ClientSize = new Size(800, 800);
             Controls.Add(NewGameBtn);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Margin = new Padding(3, 2, 3, 2);
             Name = "MenekuljWindow";
+            Padding = new Padding(20);
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Menekulj";
-
             ResumeLayout(false);
         }
 

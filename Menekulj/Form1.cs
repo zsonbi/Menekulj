@@ -47,7 +47,8 @@ namespace Menekulj
                 throw new NoGameCreatedException();
             }
 
-            int elementSize = width / boardSize;
+            int elementSize = Math.Min( width / boardSize,height/boardSize);
+            
 
 
             SuspendLayout();
