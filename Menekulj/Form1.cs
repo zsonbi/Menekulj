@@ -29,6 +29,8 @@ namespace Menekulj
             SmallRadio.Hide();
             MediumRadio.Hide();
             BigRadio.Hide();
+            LoadGameBtn.Hide();
+            this.BackgroundImage = null;
 
             if (SmallRadio.Checked)
             {
@@ -50,7 +52,6 @@ namespace Menekulj
         {
             controller = new GameModel(boardSize, mineCount);
 
-            //  controller.StartGame();
             CreateView(boardSize);
             timer = new System.Windows.Forms.Timer();
             timer.Interval = GameModel.DelayAmount;
@@ -98,7 +99,7 @@ namespace Menekulj
                     switch (controller.Cells[i, j])
                     {
                         case Cell.Empty:
-                         //   cellButton.Text = "";
+                            //   cellButton.Text = "";
 
                             break;
                         case Cell.Player:

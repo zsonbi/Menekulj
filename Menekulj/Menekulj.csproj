@@ -27,6 +27,9 @@
     <None Update="Images\enemy.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Images\mainMenuBackground.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Images\mine.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
