@@ -28,7 +28,7 @@ namespace Menekulj
 
         }
 
-        private void CreateNewGame(byte boardSize, byte mineCount)
+        private void CreateNewGame(byte boardSize, uint mineCount)
         {
             controller = new GameController(boardSize, mineCount);
 
@@ -61,7 +61,6 @@ namespace Menekulj
             elements.Clear();
             viewCells = new Control[controller.MatrixSize, controller.MatrixSize];
 
-
             int counter = 0;
             for (int i = 0; i < controller.MatrixSize; i++)
             {
@@ -77,6 +76,7 @@ namespace Menekulj
                     cellButton.Name = "cell" + i + ";" + j;
                     cellButton.Size = new Size(elementSize - 1, elementSize - 1);
                     cellButton.TabIndex = 0;
+                   // cellButton.Visible=false;
                     switch (controller.Cells[i, j])
                     {
                         case Cell.Empty:
@@ -110,6 +110,10 @@ namespace Menekulj
                 }
             }
 
+            //foreach (var cell in elements)
+            //{
+            //    cell.Visible=true;
+            //}
 
 
             NewGameBtn.Hide();
@@ -128,15 +132,24 @@ namespace Menekulj
             if (controller.IsOver())
             {
                 timer.Stop();
+                string message;
                 if (controller.PlayerWon)
                 {
-                    MessageBox.Show("You won");
+                    message ="You won! Want to try again?";
                 }
                 else
                 {
-                    MessageBox.Show("Game over! You died :C");
+                    message = "ame over! You died :C Want to try again?";
+
                 }
-                NewGameBtn.Show();
+                if (MessageBox.Show(message,"Result", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
+                {
+                    CreateNewGame(controller.MatrixSize,controller.MineCount);
+                }
+                else
+                {
+                    Close();
+                }
             }
 
         }

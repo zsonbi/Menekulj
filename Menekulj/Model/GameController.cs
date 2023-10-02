@@ -15,9 +15,11 @@ namespace Menekulj.Model
         public Cell[,] Cells { get; private set; }
         public Player Player { get; private set; }
         public List<Enemy> Enemies { get; private set; } = new List<Enemy>();
-        private uint mineCount;
+        public uint MineCount{ get;private set;}
         private Direction lookingDirection = Direction.Right;
         private System.Timers.Timer timer;
+
+
 
         public bool PlayerWon { get => !Player.Dead; }
 
@@ -31,7 +33,7 @@ namespace Menekulj.Model
                 throw new TooManyMinesException("Can't place this many mines (reduce the mine count, reduce the enemy count or increase the map size)");
             }
 
-            this.mineCount = mineCount;
+            this.MineCount = mineCount;
             this.MatrixSize = n;
 
             NewGame();
@@ -61,7 +63,7 @@ namespace Menekulj.Model
             }
 
 
-            for (int i = 0; i < mineCount; i++)
+            for (int i = 0; i < MineCount; i++)
             {
                 int index = rnd.Next(possibleMineSpots.Count);
                 Cells[possibleMineSpots[index].Row, possibleMineSpots[index].Col] = Cell.Mine;
