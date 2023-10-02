@@ -103,6 +103,10 @@ namespace Menekulj.Model
 
         }
 
+        /// <summary>
+        /// Run the game on a separate thread
+        /// </summary>
+        /// <exception cref="AlreadyRunningException">Throws exception if the game is already running</exception>
         public void StartGame()
         {
             if (Running)

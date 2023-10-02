@@ -24,7 +24,24 @@ namespace Menekulj
 
         private void NewGameBtn_Click(object sender, EventArgs e)
         {
-            CreateNewGame(15, 15);
+            NewGameBtn.Hide();
+            SmallRadio.Hide();
+            MediumRadio.Hide();
+            BigRadio.Hide();
+
+            if (SmallRadio.Checked)
+            {
+                CreateNewGame(11, 10);
+            }
+            else if(MediumRadio.Checked)
+            {
+                CreateNewGame(15, 20);
+            }
+            else
+            {
+                CreateNewGame(21, 30);
+            }
+
 
         }
 
@@ -32,10 +49,10 @@ namespace Menekulj
         {
             controller = new GameController(boardSize, mineCount);
 
-          //  controller.StartGame();
+            //  controller.StartGame();
             CreateView(boardSize);
             timer = new System.Windows.Forms.Timer();
-            timer.Interval = GameController.DelayAmount ;
+            timer.Interval = GameController.DelayAmount;
             timer.Tick += Update;
             timer.Start();
         }
@@ -76,7 +93,7 @@ namespace Menekulj
                     cellButton.Name = "cell" + i + ";" + j;
                     cellButton.Size = new Size(elementSize - 1, elementSize - 1);
                     cellButton.TabIndex = 0;
-                   // cellButton.Visible=false;
+                    // cellButton.Visible=false;
                     switch (controller.Cells[i, j])
                     {
                         case Cell.Empty:
@@ -116,7 +133,6 @@ namespace Menekulj
             //}
 
 
-            NewGameBtn.Hide();
             ResumeLayout(false);
         }
 
@@ -135,16 +151,16 @@ namespace Menekulj
                 string message;
                 if (controller.PlayerWon)
                 {
-                    message ="You won! Want to try again?";
+                    message = "You won! Want to try again?";
                 }
                 else
                 {
-                    message = "ame over! You died :C Want to try again?";
+                    message = "Game over! You died :C Want to try again?";
 
                 }
-                if (MessageBox.Show(message,"Result", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
+                if (MessageBox.Show(message, "Result", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
                 {
-                    CreateNewGame(controller.MatrixSize,controller.MineCount);
+                    CreateNewGame(controller.MatrixSize, controller.MineCount);
                 }
                 else
                 {
@@ -169,10 +185,6 @@ namespace Menekulj
             viewCells[controller.Player.Position.Row, controller.Player.Position.Col].Text = "P";
         }
 
-        private void testbtn_Click(object sender, EventArgs e)
-        {
-            controller.Tick(sender, e);
-        }
 
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -211,5 +223,7 @@ namespace Menekulj
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
+
     }
 }
