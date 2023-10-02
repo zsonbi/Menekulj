@@ -1,5 +1,5 @@
 using Menekulj.Model;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+
 
 namespace Menekulj
 {
@@ -14,13 +14,14 @@ namespace Menekulj
         private int width;
         private int height;
         private const int padAmount = 20;
+        private const int topBarAmount = 70;
         private System.Windows.Forms.Timer timer;
 
         public View()
         {
             InitializeComponent();
-            width = this.Width - 40;
-            height = this.Height - 40;
+            width = this.Width - padAmount * 2;
+            height = this.Height - padAmount * 2 - topBarAmount;
         }
 
         private void NewGameBtn_Click(object sender, EventArgs e)
@@ -44,9 +45,9 @@ namespace Menekulj
             {
                 CreateNewGame(21, 21);
             }
-
-
         }
+
+
 
         private void CreateNewGame(byte boardSize, uint mineCount)
         {
@@ -61,6 +62,7 @@ namespace Menekulj
 
         private void CreateView(byte boardSize)
         {
+            PauseBtn.Visible = true;
             if (controller == null)
             {
                 throw new NoGameCreatedException();
@@ -91,7 +93,7 @@ namespace Menekulj
                     // NewGameBtn
                     // 
                     cellButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
-                    cellButton.Location = new Point(padAmount + j * elementSize, padAmount + i * elementSize);
+                    cellButton.Location = new Point(padAmount + j * elementSize, padAmount + topBarAmount / 2 + i * elementSize);
                     cellButton.Name = "cell" + i + ";" + j;
                     cellButton.Size = new Size(elementSize - 1, elementSize - 1);
                     cellButton.TabIndex = 0;
@@ -227,6 +229,53 @@ namespace Menekulj
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        private void ResumeBtn_Click(object sender, EventArgs e)
+        {
+            timer.Start();
+            PausePanel.Visible = false;
 
+        }
+
+
+
+        private async void PauseSaveGameBtn_Click(object sender, EventArgs e)
+        {
+            if (controller == null)
+            {
+                MessageBox.Show("No game is running");
+                return ;
+            }
+
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+
+            if(folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+               await controller.SaveGame($"{folderBrowserDialog.SelectedPath}\\{DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH'-'mm'-'ss")}save.json");
+            }
+
+        }
+
+        private void PauseLoadGameBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LoadGameBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pauseBtn_Click(object sender, EventArgs e)
+        {
+            if (controller == null || timer == null || !timer.Enabled)
+            {
+                return;
+            }
+
+            timer.Stop();
+            PausePanel.Visible = true;
+        }
+
+     
     }
 }
