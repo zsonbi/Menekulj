@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Menekulj.Model
@@ -10,28 +11,40 @@ namespace Menekulj.Model
     {
 
         public Position Position { get; private set; }
-        public Position prevPosition { get; private set; }
+        public Position PrevPosition { get; private set; }
         public bool Dead { get; protected set; } = false;
 
 
-        GameModel game;
+        GameModel? game;
         public Unit(GameModel game, byte row = 0, byte col = 0)
         {
             this.game = game;
 
             this.Position = new Position(row, col);
-            this.prevPosition = new Position(row, col);
+            this.PrevPosition = new Position(row, col);
+        }
+        [JsonConstructor]
+        public Unit(Position Position, Position PrevPosition, bool Dead)
+        {
+            this.Position = Position;
+            this.PrevPosition = PrevPosition;
+            this.Dead = Dead;
+        }
+
+        public void SetGame(GameModel game)
+        {
+            this.game = game;
         }
 
         public void MoveTo(byte newRow, byte newCol)
         {
-            this.prevPosition.SetPosition(this.Position);
+            this.PrevPosition.SetPosition(this.Position);
             this.Position.SetPosition(newRow, newCol);
         }
 
         public void Move(Direction dir)
         {
-            this.prevPosition.SetPosition(this.Position);
+            this.PrevPosition.SetPosition(this.Position);
 
             switch (dir)
             {

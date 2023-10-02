@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Menekulj.Model
@@ -11,6 +12,12 @@ namespace Menekulj.Model
 
         public Enemy(GameModel game, byte row, byte col) : base(game, row, col)
         {
+        }
+
+        [JsonConstructor]
+        public Enemy(Position Position, Position PrevPosition, bool Dead) : base(Position, PrevPosition, Dead)
+        {
+
         }
 
         public Direction CalculateMoveDir(Position playerPos)

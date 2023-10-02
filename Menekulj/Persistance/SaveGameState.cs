@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Menekulj.Model;
 
 
 namespace Menekulj.Persistance
 {
-    internal struct SaveGameState
+    public struct SaveGameState
     {
         public Player Player { get; private set;}        
         public List<Enemy> Enemies { get; private set;}
@@ -16,6 +17,17 @@ namespace Menekulj.Persistance
         public uint MineCount { get; private set; }
         public Direction LookingDirection {get; private set; }
         public byte MatrixSize { get; private set; }
+
+        [JsonConstructor]
+        public SaveGameState(Player Player, List<Enemy> Enemies, Cell[] Cells,  uint MineCount, Direction LookingDirection,byte MatrixSize)
+        {
+            this.Player = Player;
+            this.Enemies = Enemies;
+            this.Cells = Cells;
+            this.MineCount = MineCount;
+            this.LookingDirection = LookingDirection;
+            this.MatrixSize= MatrixSize;
+        }
 
         public SaveGameState(GameModel modelToSave)
         {

@@ -7,8 +7,7 @@ namespace Menekulj
     public partial class View : Form
     {
 
-        GameModel controller;
-        Task gameTask;
+        GameModel gameModel;
         List<Control> elements = new List<Control>();
         Control[,] viewCells;
         private int width;
@@ -24,46 +23,33 @@ namespace Menekulj
             height = this.Height - padAmount * 2 - topBarAmount;
         }
 
-        private void NewGameBtn_Click(object sender, EventArgs e)
-        {
-            NewGameBtn.Hide();
-            SmallRadio.Hide();
-            MediumRadio.Hide();
-            BigRadio.Hide();
-            LoadGameBtn.Hide();
-            this.BackgroundImage = null;
 
-            if (SmallRadio.Checked)
+
+        private void CreateNewGame(byte boardSize = 0, uint mineCount = 0, GameModel gameModel = null)
+        {
+            if (gameModel != null)
             {
-                CreateNewGame(11, 7);
-            }
-            else if (MediumRadio.Checked)
-            {
-                CreateNewGame(15, 14);
+                this.gameModel = gameModel;
+
             }
             else
             {
-                CreateNewGame(21, 21);
+                this.gameModel = new GameModel(boardSize, mineCount);
+
             }
-        }
-
-
-
-        private void CreateNewGame(byte boardSize, uint mineCount)
-        {
-            controller = new GameModel(boardSize, mineCount);
-
-            CreateView(boardSize);
+            CreateView(this.gameModel.MatrixSize);
             timer = new System.Windows.Forms.Timer();
             timer.Interval = GameModel.DelayAmount;
             timer.Tick += Update;
             timer.Start();
         }
 
+
+
         private void CreateView(byte boardSize)
         {
             PauseBtn.Visible = true;
-            if (controller == null)
+            if (gameModel == null)
             {
                 throw new NoGameCreatedException();
             }
@@ -80,12 +66,12 @@ namespace Menekulj
             }
 
             elements.Clear();
-            viewCells = new Control[controller.MatrixSize, controller.MatrixSize];
+            viewCells = new Control[gameModel.MatrixSize, gameModel.MatrixSize];
 
             int counter = 0;
-            for (int i = 0; i < controller.MatrixSize; i++)
+            for (int i = 0; i < gameModel.MatrixSize; i++)
             {
-                for (int j = 0; j < controller.MatrixSize; j++)
+                for (int j = 0; j < gameModel.MatrixSize; j++)
                 {
                     Button cellButton = new Button();
 
@@ -98,7 +84,7 @@ namespace Menekulj
                     cellButton.Size = new Size(elementSize - 1, elementSize - 1);
                     cellButton.TabIndex = 0;
                     cellButton.BackgroundImageLayout = ImageLayout.Stretch;
-                    switch (controller.Cells[i, j])
+                    switch (gameModel.Cells[i, j])
                     {
                         case Cell.Empty:
                             //   cellButton.Text = "";
@@ -138,18 +124,18 @@ namespace Menekulj
 
         private void Update(object? sender, EventArgs args)
         {
-            if (!controller.IsOver())
+            if (!gameModel.IsOver())
             {
-                controller.Tick(sender, args);
+                gameModel.Tick(sender, args);
                 UpdateView();
 
             }
 
-            if (controller.IsOver())
+            if (gameModel.IsOver())
             {
                 timer.Stop();
                 string message;
-                if (controller.PlayerWon)
+                if (gameModel.PlayerWon)
                 {
                     message = "You won! Want to try again?";
                 }
@@ -160,7 +146,7 @@ namespace Menekulj
                 }
                 if (MessageBox.Show(message, "Result", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
                 {
-                    CreateNewGame(controller.MatrixSize, controller.MineCount);
+                    CreateNewGame(gameModel.MatrixSize, gameModel.MineCount);
                 }
                 else
                 {
@@ -172,10 +158,10 @@ namespace Menekulj
 
         private void UpdateView()
         {
-            foreach (var enemy in controller.Enemies)
+            foreach (var enemy in gameModel.Enemies)
             {
 
-                viewCells[enemy.prevPosition.Row, enemy.prevPosition.Col].BackgroundImage = null;
+                viewCells[enemy.PrevPosition.Row, enemy.PrevPosition.Col].BackgroundImage = null;
                 if (!enemy.Dead)
                 {  // viewCells[enemy.Position.Row, enemy.Position.Col].Text = "E";
                     viewCells[enemy.Position.Row, enemy.Position.Col].BackgroundImage = new Bitmap("./Images/enemy.png");
@@ -184,17 +170,70 @@ namespace Menekulj
             }
 
 
-            //viewCells[controller.Player.prevPosition.Row, controller.Player.prevPosition.Col].Text = "";
-            //viewCells[controller.Player.Position.Row, controller.Player.Position.Col].Text = "P";
-            viewCells[controller.Player.prevPosition.Row, controller.Player.prevPosition.Col].BackgroundImage = null;
-            viewCells[controller.Player.Position.Row, controller.Player.Position.Col].BackgroundImage = new Bitmap("./Images/player.png");
+            //viewCells[gameModel.Player.PrevPosition.Row, gameModel.Player.PrevPosition.Col].Text = "";
+            //viewCells[gameModel.Player.Position.Row, gameModel.Player.Position.Col].Text = "P";
+            viewCells[gameModel.Player.PrevPosition.Row, gameModel.Player.PrevPosition.Col].BackgroundImage = null;
+            viewCells[gameModel.Player.Position.Row, gameModel.Player.Position.Col].BackgroundImage = new Bitmap("./Images/player.png");
+        }
+
+        private async Task<bool> LoadGame()
+        {
+            if (gameModel != null)
+            {
+                gameModel.Pause();
+                
+            }
+
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.DefaultExt = ".json";
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                GameModel loadedModel = await Persistance.Persistance.LoadStateAsync(dialog.FileName);
+
+
+
+                CreateNewGame(gameModel:loadedModel);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
         }
 
 
+        //**********************************************************************************************************
+        //Events
+        //**********************************************************************************************************
+
+        private void NewGameBtn_Click(object sender, EventArgs e)
+        {
+            NewGameBtn.Hide();
+            SmallRadio.Hide();
+            MediumRadio.Hide();
+            BigRadio.Hide();
+            LoadGameBtn.Hide();
+            this.BackgroundImage = null;
+
+            if (SmallRadio.Checked)
+            {
+                CreateNewGame(11, 7);
+            }
+            else if (MediumRadio.Checked)
+            {
+                CreateNewGame(15, 14);
+            }
+            else
+            {
+                CreateNewGame(21, 21);
+            }
+        }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (controller == null)
+            if (gameModel == null)
             {
                 return base.ProcessCmdKey(ref msg, keyData);
             }
@@ -202,27 +241,27 @@ namespace Menekulj
             //capture up arrow key
             if (keyData == Keys.Up || keyData == Keys.W)
             {
-                controller.ChangePlayerDirection(Direction.Up);
+                gameModel.ChangePlayerDirection(Direction.Up);
                 return true;
             }
             //capture down arrow key
             if (keyData == Keys.Down || keyData == Keys.S)
             {
-                controller.ChangePlayerDirection(Direction.Down);
+                gameModel.ChangePlayerDirection(Direction.Down);
 
                 return true;
             }
             //capture left arrow key
             if (keyData == Keys.Left || keyData == Keys.A)
             {
-                controller.ChangePlayerDirection(Direction.Left);
+                gameModel.ChangePlayerDirection(Direction.Left);
 
                 return true;
             }
             //capture right arrow key
             if (keyData == Keys.Right || keyData == Keys.D)
             {
-                controller.ChangePlayerDirection(Direction.Right);
+                gameModel.ChangePlayerDirection(Direction.Right);
 
                 return true;
             }
@@ -240,34 +279,46 @@ namespace Menekulj
 
         private async void PauseSaveGameBtn_Click(object sender, EventArgs e)
         {
-            if (controller == null)
+            if (gameModel == null)
             {
                 MessageBox.Show("No game is running");
-                return ;
+                return;
             }
 
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
 
-            if(folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-               await controller.SaveGame($"{folderBrowserDialog.SelectedPath}\\{DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH'-'mm'-'ss")}save.json");
+                await gameModel.SaveGame($"{folderBrowserDialog.SelectedPath}\\{DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH'-'mm'-'ss")}save.json");
             }
 
         }
 
-        private void PauseLoadGameBtn_Click(object sender, EventArgs e)
+        private async void PauseLoadGameBtn_Click(object sender, EventArgs e)
         {
-
+            await LoadGame();
+            PausePanel.Visible=false;
         }
 
-        private void LoadGameBtn_Click(object sender, EventArgs e)
+        private async void LoadGameBtn_Click(object sender, EventArgs e)
         {
+
+
+            if(await LoadGame())
+            {
+                NewGameBtn.Hide();
+                SmallRadio.Hide();
+                MediumRadio.Hide();
+                BigRadio.Hide();
+                LoadGameBtn.Hide();
+                this.BackgroundImage = null;
+            }
 
         }
 
         private void pauseBtn_Click(object sender, EventArgs e)
         {
-            if (controller == null || timer == null || !timer.Enabled)
+            if (gameModel == null || timer == null || !timer.Enabled)
             {
                 return;
             }
@@ -276,6 +327,6 @@ namespace Menekulj
             PausePanel.Visible = true;
         }
 
-     
+
     }
 }

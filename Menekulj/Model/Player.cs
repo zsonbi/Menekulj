@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Menekulj.Model
@@ -11,6 +12,11 @@ namespace Menekulj.Model
         public Player(GameModel game,byte row=0, byte col=0) : base(game,row,col)
         {
           
+        }
+        [JsonConstructor]
+        public Player(Position Position, Position PrevPosition,bool Dead) : base(Position, PrevPosition, Dead)
+        {
+            
         }
 
  

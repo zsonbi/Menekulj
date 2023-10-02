@@ -39,6 +39,30 @@ namespace Menekulj.Model
             NewGame();
         }
 
+
+        public GameModel(Persistance.SaveGameState saveGameState)
+        {
+            this.Enemies=saveGameState.Enemies;
+            foreach (var enemy in Enemies)
+            {
+                enemy.SetGame(this);
+            }
+            this.Player =saveGameState.Player;
+            this.Player.SetGame(this);
+            this.MatrixSize=saveGameState.MatrixSize;
+            this.MineCount=saveGameState.MineCount;
+            this.LookingDirection = saveGameState.LookingDirection;
+            this.Cells=new Cell[this.MatrixSize,this.MatrixSize];
+            for (int i = 0; i < this.MatrixSize; i++)
+            {
+                for (int j = 0; j < this.MatrixSize; j++)
+                {
+                    this.Cells[i, j] = saveGameState.Cells[i*this.MatrixSize+j];
+                }
+            }
+
+        }
+
         public void NewGame()
         {
             this.Cells = new Cell[this.MatrixSize, this.MatrixSize];
@@ -139,13 +163,6 @@ namespace Menekulj.Model
            await Persistance.Persistance.SaveStateAsync(fileName,this);
         }
 
-        public async static Task<GameModel> LoadGame(string filePath)
-        {
-           return await Persistance.Persistance.LoadStateAsync(filePath);
-
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Pauses the game should only be used when the game is started with StartGame method otherwise it will do nothing
         /// </summary>
@@ -191,7 +208,7 @@ namespace Menekulj.Model
         {
             foreach (var enemy in Enemies)
             {
-                Cells[enemy.prevPosition.Row, enemy.prevPosition.Col] = Cell.Empty;
+                Cells[enemy.PrevPosition.Row, enemy.PrevPosition.Col] = Cell.Empty;
             }
 
             for (int i = 0; i < Enemies.Count; i++)
@@ -226,7 +243,7 @@ namespace Menekulj.Model
 
             if (Cells[Player.Position.Row, Player.Position.Col] == Cell.Empty || Cells[Player.Position.Row, Player.Position.Col] == Cell.Player)
             {
-                Cells[Player.prevPosition.Row, Player.prevPosition.Col] = Cell.Empty;
+                Cells[Player.PrevPosition.Row, Player.PrevPosition.Col] = Cell.Empty;
                 Cells[Player.Position.Row, Player.Position.Col] = Cell.Player;
             }
             else
