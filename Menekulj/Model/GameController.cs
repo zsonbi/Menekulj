@@ -9,7 +9,7 @@ namespace Menekulj.Model
     public class GameController
     {
         private const byte enemyCount = 2;
-        private const int delayAmount = 200;
+        public static readonly int DelayAmount = 400;
         public byte MatrixSize { get; private set; }
         private static readonly Random rnd = new Random();
         public Cell[,] Cells { get; private set; }
@@ -18,6 +18,8 @@ namespace Menekulj.Model
         private uint mineCount;
         private Direction lookingDirection = Direction.Right;
         private System.Timers.Timer timer;
+
+        public bool PlayerWon { get => !Player.Dead; }
 
 
         public bool Running { get; private set; } = false;
@@ -93,7 +95,8 @@ namespace Menekulj.Model
             if (IsOver())
             {
                 this.Running = false;
-                timer.Stop();
+                if (timer!=null&&timer.Enabled)
+                    timer.Stop();
             }
 
         }
@@ -106,7 +109,7 @@ namespace Menekulj.Model
             }
             timer = new System.Timers.Timer();
 
-            timer.Interval = 1000;
+            timer.Interval = DelayAmount;
             timer.Elapsed += Tick;
             timer.Start();
 
@@ -115,7 +118,7 @@ namespace Menekulj.Model
 
         }
 
-        private bool IsOver()
+        public bool IsOver()
         {
             return this.Player.Dead || this.Enemies.Count(x => !x.Dead) == 0;
         }

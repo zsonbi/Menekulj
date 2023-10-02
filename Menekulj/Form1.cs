@@ -32,10 +32,10 @@ namespace Menekulj
         {
             controller = new GameController(boardSize, mineCount);
 
-            controller.StartGame();
+          //  controller.StartGame();
             CreateView(boardSize);
             timer = new System.Windows.Forms.Timer();
-            timer.Interval = 500;
+            timer.Interval = GameController.DelayAmount ;
             timer.Tick += Update;
             timer.Start();
         }
@@ -47,8 +47,8 @@ namespace Menekulj
                 throw new NoGameCreatedException();
             }
 
-            int elementSize = Math.Min( width / boardSize,height/boardSize);
-            
+            int elementSize = Math.Min(width / boardSize, height / boardSize);
+
 
 
             SuspendLayout();
@@ -118,7 +118,27 @@ namespace Menekulj
 
         private void Update(object? sender, EventArgs args)
         {
-            UpdateView();
+            if (!controller.IsOver())
+            {
+                controller.Tick(sender, args);
+                UpdateView();
+
+            }
+
+            if (controller.IsOver())
+            {
+                timer.Stop();
+                if (controller.PlayerWon)
+                {
+                    MessageBox.Show("You won");
+                }
+                else
+                {
+                    MessageBox.Show("Game over! You died :C");
+                }
+                NewGameBtn.Show();
+            }
+
         }
 
         private void UpdateView()
@@ -134,7 +154,6 @@ namespace Menekulj
 
             viewCells[controller.Player.prevPosition.Row, controller.Player.prevPosition.Col].Text = "";
             viewCells[controller.Player.Position.Row, controller.Player.Position.Col].Text = "P";
-
         }
 
         private void testbtn_Click(object sender, EventArgs e)
