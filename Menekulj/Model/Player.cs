@@ -8,7 +8,7 @@ namespace Menekulj.Model
 {
     public class Player : Unit
     {
-        public Player(GameController game,byte row=0, byte col=0) : base(game,row,col)
+        public Player(GameModel game,byte row=0, byte col=0) : base(game,row,col)
         {
           
         }

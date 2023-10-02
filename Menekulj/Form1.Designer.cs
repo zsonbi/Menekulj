@@ -1,6 +1,6 @@
 ﻿namespace Menekulj
 {
-    partial class MenekuljWindow
+    partial class View
     {
         /// <summary>
         ///  Required designer variable.

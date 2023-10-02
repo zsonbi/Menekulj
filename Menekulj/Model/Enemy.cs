@@ -9,7 +9,7 @@ namespace Menekulj.Model
     public class Enemy : Unit
     {
 
-        public Enemy(GameController game, byte row, byte col) : base(game, row, col)
+        public Enemy(GameModel game, byte row, byte col) : base(game, row, col)
         {
         }
 

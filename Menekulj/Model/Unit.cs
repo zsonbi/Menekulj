@@ -14,8 +14,8 @@ namespace Menekulj.Model
         public bool Dead { get; protected set; } = false;
 
 
-        GameController game;
-        public Unit(GameController game, byte row = 0, byte col = 0)
+        GameModel game;
+        public Unit(GameModel game, byte row = 0, byte col = 0)
         {
             this.game = game;
 

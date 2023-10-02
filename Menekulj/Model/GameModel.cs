@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Menekulj.Model
 {
-    public class GameController
+    public class GameModel
     {
         private const byte enemyCount = 2;
         public static readonly int DelayAmount = 400;
@@ -16,7 +16,7 @@ namespace Menekulj.Model
         public Player Player { get; private set; }
         public List<Enemy> Enemies { get; private set; } = new List<Enemy>();
         public uint MineCount{ get;private set;}
-        private Direction lookingDirection = Direction.Right;
+        public Direction LookingDirection { get; private set;} = Direction.Right;
         private System.Timers.Timer timer;
 
 
@@ -26,7 +26,7 @@ namespace Menekulj.Model
 
         public bool Running { get; private set; } = false;
 
-        public GameController(byte n, uint mineCount, uint enemyCount = 2)
+        public GameModel(byte n, uint mineCount, uint enemyCount = 2)
         {
             if (mineCount > n * n - 1 - enemyCount)
             {
@@ -131,12 +131,54 @@ namespace Menekulj.Model
 
         public void ChangePlayerDirection(Direction dir)
         {
-            this.lookingDirection = dir;
+            this.LookingDirection = dir;
         }
+
+        public async Task SaveGame(string fileName)
+        {
+           await Persistance.Persistance.SaveStateAsync(fileName,this);
+        }
+
+        public async static Task<GameModel> LoadGame(string filePath)
+        {
+           return await Persistance.Persistance.LoadStateAsync(filePath);
+
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Pauses the game should only be used when the game is started with StartGame method otherwise it will do nothing
+        /// </summary>
+        public void Pause()
+        {
+            if(Running)
+            {
+                Running=false;
+                if (timer != null)
+                {
+                    timer.Stop();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Resumes the game should only be used when the game was started with StartGame method otherwise it will do nothing
+        /// </summary>
+        public void Resume()
+        {
+            if (!Running && timer !=null)
+            {
+                this.Running = true;
+           
+                    timer.Start();
+                
+            }
+        }
+
 
         private void HandleMovement()
         {
-            Player.Move(lookingDirection);
+            Player.Move(LookingDirection);
 
             foreach (var enemy in Enemies.Where(x => !x.Dead))
             {

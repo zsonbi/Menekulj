@@ -12,13 +12,16 @@ namespace Menekulj.Model
         {
         }
 
-        public TooManyMinesException() { }  
+        public TooManyMinesException() { }
     }
 
-    public class AlreadyRunningException : Exception { 
-        
+    public class AlreadyRunningException : Exception
+    {
+
     }
 
-    public class NoGameCreatedException : Exception { 
-        }
+    public class NoGameCreatedException : Exception
+    {
+
+    }
 }
