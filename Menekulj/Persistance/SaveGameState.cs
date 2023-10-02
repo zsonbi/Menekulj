@@ -15,17 +15,16 @@ namespace Menekulj.Persistance
         public List<Enemy> Enemies { get; private set;}
         public Cell[] Cells { get; private set; }
         public uint MineCount { get; private set; }
-        public Direction LookingDirection {get; private set; }
         public byte MatrixSize { get; private set; }
 
         [JsonConstructor]
-        public SaveGameState(Player Player, List<Enemy> Enemies, Cell[] Cells,  uint MineCount, Direction LookingDirection,byte MatrixSize)
+        public SaveGameState(Player Player, List<Enemy> Enemies, Cell[] Cells,  uint MineCount,byte MatrixSize)
         {
             this.Player = Player;
             this.Enemies = Enemies;
             this.Cells = Cells;
             this.MineCount = MineCount;
-            this.LookingDirection = LookingDirection;
+
             this.MatrixSize= MatrixSize;
         }
 
@@ -44,7 +43,6 @@ namespace Menekulj.Persistance
             }
 
             this.MineCount = modelToSave.MineCount;
-            this.LookingDirection = modelToSave.LookingDirection;
             this.MatrixSize = modelToSave.MatrixSize;
         }
     }

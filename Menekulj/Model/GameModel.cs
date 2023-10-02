@@ -8,38 +8,64 @@ namespace Menekulj.Model
 {
     public class GameModel
     {
-        private const byte enemyCount = 2;
-        public static readonly int DelayAmount = 400;
-        public byte MatrixSize { get; private set; }
-        private static readonly Random rnd = new Random();
+
+        public static readonly int GameSpeed = 400; //Millis for a move to happen
+        private static readonly Random rnd = new Random(); //Random for the mine spawning
+        private System.Timers.Timer timer; //Timer for the game on an additional thread (Deprecated)
+        
+        /// <summary>
+        /// The number of mines in the game
+        /// </summary>
+        public uint MineCount { get; private set; }
+        /// <summary>
+        /// The cells of the game
+        /// </summary>
         public Cell[,] Cells { get; private set; }
+        /// <summary>
+        /// The player
+        /// </summary>
         public Player Player { get; private set; }
+        /// <summary>
+        /// Enemies (the ones which are dead does not move or need to be shown)
+        /// </summary>
         public List<Enemy> Enemies { get; private set; } = new List<Enemy>();
-        public uint MineCount{ get;private set;}
-        public Direction LookingDirection { get; private set;} = Direction.Right;
-        private System.Timers.Timer timer;
-
-
-
+        /// <summary>
+        /// Get if the player won (Should only be checked if we're certain that the game is over)
+        /// </summary>
         public bool PlayerWon { get => !Player.Dead; }
-
-
+        /// <summary>
+        /// The size of the board
+        /// </summary>
+        public byte MatrixSize { get; private set; }
+        /// <summary>
+        /// Get if the game is running (only checks if it was started with StartGame) (Deprecated)
+        /// </summary>
         public bool Running { get; private set; } = false;
 
-        public GameModel(byte n, uint mineCount, uint enemyCount = 2)
+        /// <summary>
+        /// Creates a new game model
+        /// </summary>
+        /// <param name="mapSize">The size of the map it will be (mapSize x mapSize)</param>
+        /// <param name="mineCount">The number of mines to spawn</param>
+        /// <param name="enemyCount"></param>
+        /// <exception cref="TooManyMinesException"></exception>
+        public GameModel(byte mapSize, uint mineCount)
         {
-            if (mineCount > n * n - 1 - enemyCount)
+            if (mineCount > mapSize * mapSize - 3)
             {
                 throw new TooManyMinesException("Can't place this many mines (reduce the mine count, reduce the enemy count or increase the map size)");
             }
 
             this.MineCount = mineCount;
-            this.MatrixSize = n;
+            this.MatrixSize = mapSize;
 
-            NewGame();
+            CreateGameBoard();
         }
 
-
+        /// <summary>
+        /// Loads a game model from a saved state
+        /// </summary>
+        /// <param name="saveGameState">The saved state</param>
         public GameModel(Persistance.SaveGameState saveGameState)
         {
             this.Enemies=saveGameState.Enemies;
@@ -51,8 +77,8 @@ namespace Menekulj.Model
             this.Player.SetGame(this);
             this.MatrixSize=saveGameState.MatrixSize;
             this.MineCount=saveGameState.MineCount;
-            this.LookingDirection = saveGameState.LookingDirection;
             this.Cells=new Cell[this.MatrixSize,this.MatrixSize];
+            //Convert the 1d array into a 2d one
             for (int i = 0; i < this.MatrixSize; i++)
             {
                 for (int j = 0; j < this.MatrixSize; j++)
@@ -63,18 +89,24 @@ namespace Menekulj.Model
 
         }
 
-        public void NewGame()
+        /// <summary>
+        /// Creates the game's objects and places them at the correct positions
+        /// </summary>
+        public void CreateGameBoard()
         {
-            this.Cells = new Cell[this.MatrixSize, this.MatrixSize];
+            //If it was called again
             this.Enemies.Clear();
+
+            this.Cells = new Cell[this.MatrixSize, this.MatrixSize];
             this.Player = new Player(this, 0, 0);
             this.Enemies.Add(new Enemy(this, (byte)(this.MatrixSize - 1), 0));
             this.Enemies.Add(new Enemy(this, (byte)(this.MatrixSize - 1), (byte)(this.MatrixSize - 1)));
 
-            List<Position> possibleMineSpots = new List<Position>();
-
+            //Put the player and the enemies into the cells 2d array
             UpdateCells();
 
+            //Get where it is possible to put mines so we don't get into a near infinite loop or place it directly on the player or enemy
+            List<Position> possibleMineSpots = new List<Position>();
             for (int i = 0; i < this.MatrixSize; i++)
             {
                 for (int j = 0; j < this.MatrixSize; j++)
@@ -86,7 +118,7 @@ namespace Menekulj.Model
                 }
             }
 
-
+            //Place the mines randomly
             for (int i = 0; i < MineCount; i++)
             {
                 int index = rnd.Next(possibleMineSpots.Count);
@@ -94,6 +126,10 @@ namespace Menekulj.Model
             }
         }
 
+        /// <summary>
+        /// Get the mine positions
+        /// </summary>
+        /// <returns>A list of the positions</returns>
         public List<Position> GetMinePositions()
         {
             List<Position> mines = new List<Position>();
@@ -112,6 +148,11 @@ namespace Menekulj.Model
             return mines;
         }
 
+        /// <summary>
+        /// A single tick of the game move every entity once
+        /// </summary>
+        /// <param name="sender">The object which triggered this event</param>
+        /// <param name="args">What was the event</param>
         public void Tick(object? sender, EventArgs args)
         {
             HandleMovement();
@@ -121,6 +162,7 @@ namespace Menekulj.Model
             if (IsOver())
             {
                 this.Running = false;
+                //If the game was ran by the StartGame() method 
                 if (timer!=null&&timer.Enabled)
                     timer.Stop();
             }
@@ -137,17 +179,18 @@ namespace Menekulj.Model
             {
                 throw new AlreadyRunningException();
             }
-            timer = new System.Timers.Timer();
 
-            timer.Interval = DelayAmount;
+            timer = new System.Timers.Timer();
+            timer.Interval = GameSpeed;
             timer.Elapsed += Tick;
             timer.Start();
-
             Running = true;
-
-
         }
 
+        /// <summary>
+        /// Check if the game is over
+        /// </summary>
+        /// <returns>true - one side has won, false - the game is still going</returns>
         public bool IsOver()
         {
             return this.Player.Dead || this.Enemies.Count(x => !x.Dead) == 0;
@@ -155,7 +198,7 @@ namespace Menekulj.Model
 
         public void ChangePlayerDirection(Direction dir)
         {
-            this.LookingDirection = dir;
+            this.Player.SetDirection ( dir);
         }
 
         public async Task SaveGame(string fileName)
@@ -192,10 +235,12 @@ namespace Menekulj.Model
             }
         }
 
-
+        /// <summary>
+        /// Moves every entity on the board by one
+        /// </summary>
         private void HandleMovement()
         {
-            Player.Move(LookingDirection);
+            Player.Move();
 
             foreach (var enemy in Enemies.Where(x => !x.Dead))
             {
@@ -204,8 +249,13 @@ namespace Menekulj.Model
 
         }
 
+        /// <summary>
+        /// Update the entities position on the cells 2d array
+        /// </summary>
+        /// <returns>true - player has died, false - the player is still alive</returns>
         private bool UpdateCells()
         {
+            //Update the enemies
             foreach (var enemy in Enemies)
             {
                 Cells[enemy.PrevPosition.Row, enemy.PrevPosition.Col] = Cell.Empty;
@@ -240,7 +290,7 @@ namespace Menekulj.Model
                 }
             }
 
-
+            //Update the player
             if (Cells[Player.Position.Row, Player.Position.Col] == Cell.Empty || Cells[Player.Position.Row, Player.Position.Col] == Cell.Player)
             {
                 Cells[Player.PrevPosition.Row, Player.PrevPosition.Col] = Cell.Empty;

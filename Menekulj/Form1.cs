@@ -39,7 +39,7 @@ namespace Menekulj
             }
             CreateView(this.gameModel.MatrixSize);
             timer = new System.Windows.Forms.Timer();
-            timer.Interval = GameModel.DelayAmount;
+            timer.Interval = GameModel.GameSpeed;
             timer.Tick += Update;
             timer.Start();
         }
@@ -69,15 +69,13 @@ namespace Menekulj
             viewCells = new Control[gameModel.MatrixSize, gameModel.MatrixSize];
 
             int counter = 0;
+            //Creates the cells for the game where the game object will be rendered
             for (int i = 0; i < gameModel.MatrixSize; i++)
             {
                 for (int j = 0; j < gameModel.MatrixSize; j++)
                 {
+                    //A single cell is a disabled button -,- cool stuff...
                     Button cellButton = new Button();
-
-                    // 
-                    // NewGameBtn
-                    // 
                     cellButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
                     cellButton.Location = new Point(padAmount + j * elementSize, padAmount + topBarAmount / 2 + i * elementSize);
                     cellButton.Name = "cell" + i + ";" + j;
@@ -87,23 +85,20 @@ namespace Menekulj
                     switch (gameModel.Cells[i, j])
                     {
                         case Cell.Empty:
-                            //   cellButton.Text = "";
-
                             break;
+
                         case Cell.Player:
                             cellButton.BackgroundImage = new Bitmap("./Images/player.png");
-
                             break;
+
                         case Cell.Enemy:
-                            // cellButton.Text = "E";
                             cellButton.BackgroundImage = new Bitmap("./Images/enemy.png");
-
-
                             break;
+
                         case Cell.Mine:
-                            //  cellButton.Text = "M";
                             cellButton.BackgroundImage = new Bitmap("./Images/mine.png");
                             break;
+
                         default:
                             break;
                     }
@@ -163,15 +158,11 @@ namespace Menekulj
 
                 viewCells[enemy.PrevPosition.Row, enemy.PrevPosition.Col].BackgroundImage = null;
                 if (!enemy.Dead)
-                {  // viewCells[enemy.Position.Row, enemy.Position.Col].Text = "E";
+                {
                     viewCells[enemy.Position.Row, enemy.Position.Col].BackgroundImage = new Bitmap("./Images/enemy.png");
-
                 }
             }
 
-
-            //viewCells[gameModel.Player.PrevPosition.Row, gameModel.Player.PrevPosition.Col].Text = "";
-            //viewCells[gameModel.Player.Position.Row, gameModel.Player.Position.Col].Text = "P";
             viewCells[gameModel.Player.PrevPosition.Row, gameModel.Player.PrevPosition.Col].BackgroundImage = null;
             viewCells[gameModel.Player.Position.Row, gameModel.Player.Position.Col].BackgroundImage = new Bitmap("./Images/player.png");
         }
@@ -181,7 +172,6 @@ namespace Menekulj
             if (gameModel != null)
             {
                 gameModel.Pause();
-                
             }
 
             OpenFileDialog dialog = new OpenFileDialog();
@@ -189,11 +179,22 @@ namespace Menekulj
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+                if (gameModel == null)
+                {
+                    NewGameBtn.Hide();
+                    SmallRadio.Hide();
+                    MediumRadio.Hide();
+                    BigRadio.Hide();
+                    LoadGameBtn.Hide();
+                    this.BackgroundImage = null;
+                }
+
+
                 GameModel loadedModel = await Persistance.Persistance.LoadStateAsync(dialog.FileName);
 
 
 
-                CreateNewGame(gameModel:loadedModel);
+                CreateNewGame(gameModel: loadedModel);
                 return true;
             }
             else
@@ -296,23 +297,18 @@ namespace Menekulj
 
         private async void PauseLoadGameBtn_Click(object sender, EventArgs e)
         {
-            await LoadGame();
-            PausePanel.Visible=false;
+            if (await LoadGame())
+            {
+                PausePanel.Visible = false;
+            }
         }
 
         private async void LoadGameBtn_Click(object sender, EventArgs e)
         {
 
 
-            if(await LoadGame())
-            {
-                NewGameBtn.Hide();
-                SmallRadio.Hide();
-                MediumRadio.Hide();
-                BigRadio.Hide();
-                LoadGameBtn.Hide();
-                this.BackgroundImage = null;
-            }
+            await LoadGame();
+
 
         }
 

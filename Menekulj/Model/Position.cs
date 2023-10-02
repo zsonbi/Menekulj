@@ -6,48 +6,89 @@ using System.Threading.Tasks;
 
 namespace Menekulj.Model
 {
+    /// <summary>
+    /// 2d position
+    /// </summary>
     public class Position
     {
-       public int Row{get; private set; }
-       public int Col{get; private set; }
+        /// <summary>
+        /// Row (y coordinate)
+        /// </summary>
+        public int Row { get; private set; }
+        /// <summary>
+        /// Col (x coordinate)
+        /// </summary>
+        public int Col { get; private set; }
 
+        /// <summary>
+        /// Create a new Position
+        /// </summary>
+        /// <param name="row">The row (y)</param>
+        /// <param name="col">The col (x)</param>
         public Position(int row, int col)
         {
             this.Row = row;
             this.Col = col;
         }
 
-        public void SetPosition(int  row, int col)
+        /// <summary>
+        /// Override the row and the column of the position
+        /// </summary>
+        /// <param name="row">New row</param>
+        /// <param name="col">New column</param>
+        public void SetPosition(int row, int col)
         {
             this.Row = row;
             this.Col = col;
         }
 
+        /// <summary>
+        /// Override it to match the given position's values
+        /// </summary>
+        /// <param name="pos">The position to copy</param>
         public void SetPosition(Position pos)
         {
             this.Row = pos.Row;
             this.Col = pos.Col;
         }
 
+        /// <summary>
+        /// Update only the column
+        /// </summary>
+        /// <param name="col">The new column value</param>
         public void SetCol(int col)
         {
-            this.Col=col;
+            this.Col = col;
         }
 
+        /// <summary>
+        /// Update only the row
+        /// </summary>
+        /// <param name="row">The now row value</param>
         public void SetRow(int row)
         {
-            this.Row=row;
+            this.Row = row;
         }
 
+        /// <summary>
+        /// Calculate distance between this and an another position
+        /// </summary>
+        /// <param name="other">The other position</param>
+        /// <returns>The distance between the two positions</returns>
         public float CalcDistance(Position other)
         {
-            return (float)Math.Sqrt(Math.Pow( this.Row-other.Row,2)+Math.Pow(this.Col-other.Col,2));
+            return (float)Math.Sqrt(Math.Pow(this.Row - other.Row, 2) + Math.Pow(this.Col - other.Col, 2));
         }
 
+        /// <summary>
+        /// Calculate the distance between this and the given (row,col) position 
+        /// </summary>
+        /// <param name="row">The row to calculate</param>
+        /// <param name="col">The column to calculate</param>
+        /// <returns>The distance between the two positions</returns>
         public float DistanceTo(int row, int col)
         {
             return (float)Math.Sqrt(Math.Pow(this.Row - row, 2) + Math.Pow(this.Col - col, 2));
-
         }
     }
 }

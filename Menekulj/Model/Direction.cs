@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Menekulj.Model
 {
+    /// <summary>
+    /// Direction for movement
+    /// </summary>
     public enum Direction : byte
     {
         Left = 0,

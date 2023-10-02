@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Menekulj.Model
 {
+    /// <summary>
+    /// Cell types for the board
+    /// </summary>
     public enum Cell : byte
     {
         Empty=0,
