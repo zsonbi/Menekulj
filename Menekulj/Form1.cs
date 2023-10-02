@@ -1,4 +1,5 @@
 using Menekulj.Model;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Menekulj
 {
@@ -93,6 +94,7 @@ namespace Menekulj
                     cellButton.Name = "cell" + i + ";" + j;
                     cellButton.Size = new Size(elementSize - 1, elementSize - 1);
                     cellButton.TabIndex = 0;
+                    cellButton.BackgroundImageLayout = ImageLayout.Stretch;
                     // cellButton.Visible=false;
                     switch (controller.Cells[i, j])
                     {
@@ -101,17 +103,19 @@ namespace Menekulj
 
                             break;
                         case Cell.Player:
-                            cellButton.Text = "P";
+                            cellButton.BackgroundImage = new Bitmap("./Images/player.png");
 
                             break;
                         case Cell.Enemy:
-                            cellButton.Text = "E";
+                           // cellButton.Text = "E";
+                            cellButton.BackgroundImage = new Bitmap("./Images/enemy.png");
+
 
                             break;
                         case Cell.Mine:
-                            cellButton.Text = "M";
-                            //cellButton.BackgroundImage = Properties.Resources
-
+                          //  cellButton.Text = "M";
+                            cellButton.BackgroundImage = new Bitmap("./Images/mine.png");
+                            cellButton.BackgroundImageLayout = ImageLayout.Stretch;
                             break;
                         default:
                             break;
@@ -175,14 +179,19 @@ namespace Menekulj
             foreach (var enemy in controller.Enemies)
             {
 
-                viewCells[enemy.prevPosition.Row, enemy.prevPosition.Col].Text = "";
+                viewCells[enemy.prevPosition.Row, enemy.prevPosition.Col].BackgroundImage=null;
                 if (!enemy.Dead)
-                    viewCells[enemy.Position.Row, enemy.Position.Col].Text = "E";
+                {  // viewCells[enemy.Position.Row, enemy.Position.Col].Text = "E";
+                    viewCells[enemy.Position.Row, enemy.Position.Col].BackgroundImage = new Bitmap("./Images/enemy.png");
+
+                }
             }
 
 
-            viewCells[controller.Player.prevPosition.Row, controller.Player.prevPosition.Col].Text = "";
-            viewCells[controller.Player.Position.Row, controller.Player.Position.Col].Text = "P";
+            //viewCells[controller.Player.prevPosition.Row, controller.Player.prevPosition.Col].Text = "";
+            //viewCells[controller.Player.Position.Row, controller.Player.Position.Col].Text = "P";
+            viewCells[controller.Player.prevPosition.Row, controller.Player.prevPosition.Col].BackgroundImage = null;
+            viewCells[controller.Player.Position.Row, controller.Player.Position.Col].BackgroundImage = new Bitmap("./Images/player.png") ;
         }
 
 
@@ -195,27 +204,27 @@ namespace Menekulj
             }
 
             //capture up arrow key
-            if (keyData == Keys.Up)
+            if (keyData == Keys.Up || keyData == Keys.W)
             {
                 controller.ChangePlayerDirection(Direction.Up);
                 return true;
             }
             //capture down arrow key
-            if (keyData == Keys.Down)
+            if (keyData == Keys.Down || keyData == Keys.S)
             {
                 controller.ChangePlayerDirection(Direction.Down);
 
                 return true;
             }
             //capture left arrow key
-            if (keyData == Keys.Left)
+            if (keyData == Keys.Left || keyData==Keys.A)
             {
                 controller.ChangePlayerDirection(Direction.Left);
 
                 return true;
             }
             //capture right arrow key
-            if (keyData == Keys.Right)
+            if (keyData == Keys.Right || keyData==Keys.D)
             {
                 controller.ChangePlayerDirection(Direction.Right);
 
