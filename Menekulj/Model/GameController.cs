@@ -120,6 +120,11 @@ namespace Menekulj.Model
             return this.Player.Dead || this.Enemies.Count(x => !x.Dead) == 0;
         }
 
+        public void ChangePlayerDirection(Direction dir)
+        {
+            this.lookingDirection=dir;
+        }
+
         private void HandleMovement()
         {
             Player.Move(lookingDirection);

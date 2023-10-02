@@ -3,7 +3,7 @@ using Menekulj.Model;
 namespace Menekulj
 {
 
-    public partial class Form1 : Form
+    public partial class MenekuljWindow : Form
     {
 
         GameController controller;
@@ -15,7 +15,7 @@ namespace Menekulj
         private const int padAmount = 20;
         private System.Windows.Forms.Timer timer;
 
-        public Form1()
+        public MenekuljWindow()
         {
             InitializeComponent();
             width = this.Width - 40;
@@ -104,6 +104,7 @@ namespace Menekulj
                     elements.Add(cellButton);
                     Controls.Add(cellButton);
                     viewCells[i, j] = cellButton;
+                    cellButton.Enabled = false;
                     counter++;
                 }
             }
@@ -138,6 +139,44 @@ namespace Menekulj
         private void testbtn_Click(object sender, EventArgs e)
         {
             controller.Tick(sender, e);
+        }
+
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (controller == null)
+            {
+                return base.ProcessCmdKey(ref msg, keyData);
+            }
+
+            //capture up arrow key
+            if (keyData == Keys.Up)
+            {
+                controller.ChangePlayerDirection(Direction.Up);
+                return true;
+            }
+            //capture down arrow key
+            if (keyData == Keys.Down)
+            {
+                controller.ChangePlayerDirection(Direction.Down);
+
+                return true;
+            }
+            //capture left arrow key
+            if (keyData == Keys.Left)
+            {
+                controller.ChangePlayerDirection(Direction.Left);
+
+                return true;
+            }
+            //capture right arrow key
+            if (keyData == Keys.Right)
+            {
+                controller.ChangePlayerDirection(Direction.Right);
+
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }

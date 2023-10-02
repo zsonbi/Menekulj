@@ -1,6 +1,6 @@
 ﻿namespace Menekulj
 {
-    partial class Form1
+    partial class MenekuljWindow
     {
         /// <summary>
         ///  Required designer variable.
@@ -42,15 +42,17 @@
             NewGameBtn.UseVisualStyleBackColor = true;
             NewGameBtn.Click += NewGameBtn_Click;
             // 
-            // Form1
+            // MenekuljWindow
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.ControlDarkDark;
             ClientSize = new Size(800, 800);
             Controls.Add(NewGameBtn);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            Name = "Form1";
+            Name = "MenekuljWindow";
             Text = "Menekulj";
+
             ResumeLayout(false);
         }
 
