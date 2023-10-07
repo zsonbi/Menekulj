@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace Menekulj.Model
 {
@@ -33,6 +28,12 @@ namespace Menekulj.Model
         public Unit(GameModel game, byte row = 0, byte col = 0)
         {
             this.game = game;
+
+            if (row >= game.MatrixSize || col >= game.MatrixSize)
+            {
+                throw new ArgumentException("The unit is out of bounds of the game");
+            }
+
             this.Position = new Position(row, col);
             //Also set the previous position to it to avoid nullpointerexception
             this.PrevPosition = new Position(row, col);
@@ -57,7 +58,7 @@ namespace Menekulj.Model
         /// Sets the game reference
         /// </summary>
         /// <param name="game">Reference to the game</param>
-        internal void SetGame(GameModel game)
+        public void SetGame(GameModel game)
         {
             this.game = game;
         }
@@ -67,7 +68,7 @@ namespace Menekulj.Model
         /// </summary>
         /// <param name="newRow">The row to move to</param>
         /// <param name="newCol">The column to move to</param>
-        internal void MoveTo(byte newRow, byte newCol)
+        public void MoveTo(byte newRow, byte newCol)
         {
             this.PrevPosition.SetPosition(this.Position);
             this.Position.SetPosition(newRow, newCol);
@@ -77,8 +78,13 @@ namespace Menekulj.Model
         /// Move towards a direction
         /// </summary>
         /// <param name="dir">Direction to move towards</param>
-        internal void Move(Direction dir)
+        public void Move(Direction dir)
         {
+            if (this.Dead)
+            {
+                throw new UnitIsDeadException();
+            }
+
             if (game == null)
             {
                 throw new NullReferenceException("Game was not set for the unit");
@@ -92,25 +98,25 @@ namespace Menekulj.Model
                 case Direction.Left:
                     if (this.Position.Col - 1 >= 0)
                     {
-                        this.Position.SetCol(this.Position.Col-1);
+                        this.Position.SetCol(this.Position.Col - 1);
                     }
                     break;
                 case Direction.Up:
-                    if (this.Position.Row - 1 >=0)
+                    if (this.Position.Row - 1 >= 0)
                     {
-                        this.Position.SetRow(this.Position.Row-1);
+                        this.Position.SetRow(this.Position.Row - 1);
                     }
                     break;
                 case Direction.Right:
-                    if(this.Position.Col+1 < game.MatrixSize)
+                    if (this.Position.Col + 1 < game.MatrixSize)
                     {
-                        this.Position.SetCol(this.Position.Col+1);
+                        this.Position.SetCol(this.Position.Col + 1);
                     }
                     break;
                 case Direction.Down:
                     if (this.Position.Row + 1 < game.MatrixSize)
                     {
-                        this.Position.SetRow(this.Position.Row+1);
+                        this.Position.SetRow(this.Position.Row + 1);
                     }
                     break;
                 default:
@@ -122,7 +128,7 @@ namespace Menekulj.Model
         /// Kill it
         /// (Change Dead to true)
         /// </summary>
-        internal void Die()
+        public void Die()
         {
             this.Dead = true;
         }

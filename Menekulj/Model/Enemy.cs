@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace Menekulj.Model
 {
@@ -38,7 +33,7 @@ namespace Menekulj.Model
         /// </summary>
         /// <param name="playerPos">The position of the player</param>
         /// <returns>The closest direction</returns>
-        internal Direction CalculateMoveDir(Position playerPos)
+        public Direction CalculateMoveDir(Position playerPos)
         {
             Direction dir = Direction.Left;
             float least = playerPos.DistanceTo(this.Position.Row, this.Position.Col - 1);

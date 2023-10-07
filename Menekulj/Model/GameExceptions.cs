@@ -24,4 +24,10 @@ namespace Menekulj.Model
     {
 
     }
+
+    public class UnitIsDeadException : Exception
+    {
+
+
+    }
 }

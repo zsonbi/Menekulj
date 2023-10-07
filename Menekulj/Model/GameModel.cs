@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Menekulj.Model
+﻿namespace Menekulj.Model
 {
     public class GameModel
     {
 
-        public static readonly int GameSpeed = 400; //Millis for a move to happen
+        public const int GameSpeed = 400; //Millis for a move to happen
         private static readonly Random rnd = new Random(); //Random for the mine spawning
         private System.Timers.Timer timer; //Timer for the game on an additional thread (Deprecated)
-        
+
         /// <summary>
         /// The number of mines in the game
         /// </summary>
@@ -47,7 +41,6 @@ namespace Menekulj.Model
         /// </summary>
         /// <param name="mapSize">The size of the map it will be (mapSize x mapSize)</param>
         /// <param name="mineCount">The number of mines to spawn</param>
-        /// <param name="enemyCount"></param>
         /// <exception cref="TooManyMinesException"></exception>
         public GameModel(byte mapSize, uint mineCount)
         {
@@ -68,22 +61,22 @@ namespace Menekulj.Model
         /// <param name="saveGameState">The saved state</param>
         public GameModel(Persistance.SaveGameState saveGameState)
         {
-            this.Enemies=saveGameState.Enemies;
+            this.Enemies = saveGameState.Enemies;
             foreach (var enemy in Enemies)
             {
                 enemy.SetGame(this);
             }
-            this.Player =saveGameState.Player;
+            this.Player = saveGameState.Player;
             this.Player.SetGame(this);
-            this.MatrixSize=saveGameState.MatrixSize;
-            this.MineCount=saveGameState.MineCount;
-            this.Cells=new Cell[this.MatrixSize,this.MatrixSize];
+            this.MatrixSize = saveGameState.MatrixSize;
+            this.MineCount = saveGameState.MineCount;
+            this.Cells = new Cell[this.MatrixSize, this.MatrixSize];
             //Convert the 1d array into a 2d one
             for (int i = 0; i < this.MatrixSize; i++)
             {
                 for (int j = 0; j < this.MatrixSize; j++)
                 {
-                    this.Cells[i, j] = saveGameState.Cells[i*this.MatrixSize+j];
+                    this.Cells[i, j] = saveGameState.Cells[i * this.MatrixSize + j];
                 }
             }
 
@@ -92,7 +85,7 @@ namespace Menekulj.Model
         /// <summary>
         /// Creates the game's objects and places them at the correct positions
         /// </summary>
-        public void CreateGameBoard()
+        private void CreateGameBoard()
         {
             //If it was called again
             this.Enemies.Clear();
@@ -123,6 +116,7 @@ namespace Menekulj.Model
             {
                 int index = rnd.Next(possibleMineSpots.Count);
                 Cells[possibleMineSpots[index].Row, possibleMineSpots[index].Col] = Cell.Mine;
+                possibleMineSpots.RemoveAt(index);
             }
         }
 
@@ -163,7 +157,7 @@ namespace Menekulj.Model
             {
                 this.Running = false;
                 //If the game was ran by the StartGame() method 
-                if (timer!=null&&timer.Enabled)
+                if (timer != null && timer.Enabled)
                     timer.Stop();
             }
 
@@ -171,9 +165,10 @@ namespace Menekulj.Model
 
         /// <summary>
         /// Run the game on a separate thread
+        /// <param name="speed">Optional speed parameter for the game</param>
         /// </summary>
         /// <exception cref="AlreadyRunningException">Throws exception if the game is already running</exception>
-        public void StartGame()
+        public void StartGame(int speed = GameSpeed)
         {
             if (Running)
             {
@@ -181,7 +176,7 @@ namespace Menekulj.Model
             }
 
             timer = new System.Timers.Timer();
-            timer.Interval = GameSpeed;
+            timer.Interval = speed;
             timer.Elapsed += Tick;
             timer.Start();
             Running = true;
@@ -198,12 +193,12 @@ namespace Menekulj.Model
 
         public void ChangePlayerDirection(Direction dir)
         {
-            this.Player.SetDirection ( dir);
+            this.Player.SetDirection(dir);
         }
 
         public async Task SaveGame(string fileName)
         {
-           await Persistance.Persistance.SaveStateAsync(fileName,this);
+            await Persistance.Persistance.SaveStateAsync(fileName, this);
         }
 
         /// <summary>
@@ -211,9 +206,9 @@ namespace Menekulj.Model
         /// </summary>
         public void Pause()
         {
-            if(Running)
+            if (Running)
             {
-                Running=false;
+                Running = false;
                 if (timer != null)
                 {
                     timer.Stop();
@@ -226,12 +221,12 @@ namespace Menekulj.Model
         /// </summary>
         public void Resume()
         {
-            if (!Running && timer !=null)
+            if (!Running && timer != null)
             {
                 this.Running = true;
-           
-                    timer.Start();
-                
+
+                timer.Start();
+
             }
         }
 

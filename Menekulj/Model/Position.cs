@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Menekulj.Model
+﻿namespace Menekulj.Model
 {
     /// <summary>
     /// 2d position
@@ -89,6 +83,16 @@ namespace Menekulj.Model
         public float DistanceTo(int row, int col)
         {
             return (float)Math.Sqrt(Math.Pow(this.Row - row, 2) + Math.Pow(this.Col - col, 2));
+        }
+
+        /// <summary>
+        /// Check if it is the same as the other Position
+        /// </summary>
+        /// <param name="other">Other Position</param>
+        /// <returns>true-if the row and col is the same  false-otherwise</returns>
+        public bool Equals(Position other)
+        {
+            return this.Row == other.Row && this.Col == other.Col;
         }
     }
 }
