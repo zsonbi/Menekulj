@@ -37,7 +37,7 @@ namespace Menekulj
                 this.gameModel = new GameModel(boardSize, mineCount);
 
             }
-            CreateView(this.gameModel.MatrixSize);
+            CreateView();
             timer = new System.Windows.Forms.Timer();
             timer.Interval = GameModel.GameSpeed;
             timer.Tick += Update;
@@ -46,7 +46,7 @@ namespace Menekulj
 
 
 
-        private void CreateView(byte boardSize)
+        private void CreateView()
         {
             PauseBtn.Visible = true;
             if (gameModel == null)
@@ -54,7 +54,7 @@ namespace Menekulj
                 throw new NoGameCreatedException();
             }
 
-            int elementSize = Math.Min(width / boardSize, height / boardSize);
+            int elementSize = Math.Min(width / gameModel.MatrixSize, height / gameModel.MatrixSize);
 
 
 
@@ -186,6 +186,7 @@ namespace Menekulj
                     MediumRadio.Hide();
                     BigRadio.Hide();
                     LoadGameBtn.Hide();
+                    Closebtn.Hide();
                     this.BackgroundImage = null;
                 }
 
@@ -216,6 +217,7 @@ namespace Menekulj
             MediumRadio.Hide();
             BigRadio.Hide();
             LoadGameBtn.Hide();
+            Closebtn.Hide();
             this.BackgroundImage = null;
 
             if (SmallRadio.Checked)
@@ -323,6 +325,9 @@ namespace Menekulj
             PausePanel.Visible = true;
         }
 
-
+        private void Closebtn_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

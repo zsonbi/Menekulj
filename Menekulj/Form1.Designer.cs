@@ -39,8 +39,10 @@
             PauseLoadGameBtn = new Button();
             PauseLabel = new Label();
             ResumeBtn = new Button();
+            PauseCloseBtn = new Button();
             LoadNewGameBtn = new Button();
             PauseBtn = new Button();
+            Closebtn = new Button();
             PausePanel.SuspendLayout();
             SuspendLayout();
             // 
@@ -48,9 +50,10 @@
             // 
             NewGameBtn.BackColor = SystemColors.ControlDarkDark;
             NewGameBtn.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            NewGameBtn.Location = new Point(333, 353);
+            NewGameBtn.Location = new Point(291, 265);
+            NewGameBtn.Margin = new Padding(3, 2, 3, 2);
             NewGameBtn.Name = "NewGameBtn";
-            NewGameBtn.Size = new Size(203, 60);
+            NewGameBtn.Size = new Size(178, 45);
             NewGameBtn.TabIndex = 0;
             NewGameBtn.Text = "New Game";
             NewGameBtn.UseVisualStyleBackColor = false;
@@ -61,10 +64,9 @@
             SmallRadio.AutoSize = true;
             SmallRadio.Checked = true;
             SmallRadio.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            SmallRadio.Location = new Point(333, 433);
-            SmallRadio.Margin = new Padding(3, 4, 3, 4);
+            SmallRadio.Location = new Point(291, 325);
             SmallRadio.Name = "SmallRadio";
-            SmallRadio.Size = new Size(147, 36);
+            SmallRadio.Size = new Size(118, 29);
             SmallRadio.TabIndex = 1;
             SmallRadio.TabStop = true;
             SmallRadio.Text = "Small map";
@@ -74,10 +76,9 @@
             // 
             MediumRadio.AutoSize = true;
             MediumRadio.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            MediumRadio.Location = new Point(333, 480);
-            MediumRadio.Margin = new Padding(3, 4, 3, 4);
+            MediumRadio.Location = new Point(291, 360);
             MediumRadio.Name = "MediumRadio";
-            MediumRadio.Size = new Size(179, 36);
+            MediumRadio.Size = new Size(142, 29);
             MediumRadio.TabIndex = 2;
             MediumRadio.Text = "Medium map";
             MediumRadio.UseVisualStyleBackColor = true;
@@ -86,10 +87,9 @@
             // 
             BigRadio.AutoSize = true;
             BigRadio.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point);
-            BigRadio.Location = new Point(333, 527);
-            BigRadio.Margin = new Padding(3, 4, 3, 4);
+            BigRadio.Location = new Point(291, 395);
             BigRadio.Name = "BigRadio";
-            BigRadio.Size = new Size(123, 36);
+            BigRadio.Size = new Size(99, 29);
             BigRadio.TabIndex = 3;
             BigRadio.Text = "Big map";
             BigRadio.UseVisualStyleBackColor = true;
@@ -98,10 +98,9 @@
             // 
             LoadGameBtn.BackColor = SystemColors.ControlDarkDark;
             LoadGameBtn.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            LoadGameBtn.Location = new Point(333, 268);
-            LoadGameBtn.Margin = new Padding(3, 4, 3, 4);
+            LoadGameBtn.Location = new Point(291, 201);
             LoadGameBtn.Name = "LoadGameBtn";
-            LoadGameBtn.Size = new Size(203, 60);
+            LoadGameBtn.Size = new Size(178, 45);
             LoadGameBtn.TabIndex = 4;
             LoadGameBtn.Text = "Load Game";
             LoadGameBtn.UseVisualStyleBackColor = false;
@@ -114,20 +113,19 @@
             PausePanel.Controls.Add(PauseLoadGameBtn);
             PausePanel.Controls.Add(PauseLabel);
             PausePanel.Controls.Add(ResumeBtn);
-            PausePanel.Location = new Point(227, 211);
-            PausePanel.Margin = new Padding(3, 4, 3, 4);
+            PausePanel.Controls.Add(PauseCloseBtn);
+            PausePanel.Location = new Point(204, 156);
             PausePanel.Name = "PausePanel";
-            PausePanel.Size = new Size(466, 480);
+            PausePanel.Size = new Size(408, 360);
             PausePanel.TabIndex = 5;
             PausePanel.Visible = false;
             // 
             // PauseSaveGameBtn
             // 
             PauseSaveGameBtn.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
-            PauseSaveGameBtn.Location = new Point(137, 297);
-            PauseSaveGameBtn.Margin = new Padding(3, 4, 3, 4);
+            PauseSaveGameBtn.Location = new Point(120, 223);
             PauseSaveGameBtn.Name = "PauseSaveGameBtn";
-            PauseSaveGameBtn.Size = new Size(171, 57);
+            PauseSaveGameBtn.Size = new Size(150, 43);
             PauseSaveGameBtn.TabIndex = 3;
             PauseSaveGameBtn.Text = "Save Game";
             PauseSaveGameBtn.UseVisualStyleBackColor = true;
@@ -136,10 +134,9 @@
             // PauseLoadGameBtn
             // 
             PauseLoadGameBtn.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
-            PauseLoadGameBtn.Location = new Point(137, 212);
-            PauseLoadGameBtn.Margin = new Padding(3, 4, 3, 4);
+            PauseLoadGameBtn.Location = new Point(120, 159);
             PauseLoadGameBtn.Name = "PauseLoadGameBtn";
-            PauseLoadGameBtn.Size = new Size(171, 57);
+            PauseLoadGameBtn.Size = new Size(150, 43);
             PauseLoadGameBtn.TabIndex = 2;
             PauseLoadGameBtn.Text = "Load Game";
             PauseLoadGameBtn.UseVisualStyleBackColor = true;
@@ -149,23 +146,34 @@
             // 
             PauseLabel.AutoSize = true;
             PauseLabel.Font = new Font("Segoe UI", 24F, FontStyle.Bold, GraphicsUnit.Point);
-            PauseLabel.Location = new Point(56, 33);
+            PauseLabel.Location = new Point(49, 25);
             PauseLabel.Name = "PauseLabel";
-            PauseLabel.Size = new Size(396, 54);
+            PauseLabel.Size = new Size(315, 45);
             PauseLabel.TabIndex = 1;
             PauseLabel.Text = "The game is paused";
             // 
             // ResumeBtn
             // 
             ResumeBtn.Font = new Font("Segoe UI", 15.75F, FontStyle.Bold, GraphicsUnit.Point);
-            ResumeBtn.Location = new Point(137, 125);
-            ResumeBtn.Margin = new Padding(3, 4, 3, 4);
+            ResumeBtn.Location = new Point(120, 94);
             ResumeBtn.Name = "ResumeBtn";
-            ResumeBtn.Size = new Size(171, 57);
+            ResumeBtn.Size = new Size(150, 43);
             ResumeBtn.TabIndex = 0;
             ResumeBtn.Text = "Resume";
             ResumeBtn.UseVisualStyleBackColor = true;
             ResumeBtn.Click += ResumeBtn_Click;
+            // 
+            // PauseCloseBtn
+            // 
+            PauseCloseBtn.BackColor = Color.IndianRed;
+            PauseCloseBtn.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            PauseCloseBtn.Location = new Point(120, 288);
+            PauseCloseBtn.Name = "PauseCloseBtn";
+            PauseCloseBtn.Size = new Size(150, 47);
+            PauseCloseBtn.TabIndex = 0;
+            PauseCloseBtn.Text = "Exit";
+            PauseCloseBtn.UseVisualStyleBackColor = false;
+            PauseCloseBtn.Click += Closebtn_Click;
             // 
             // LoadNewGameBtn
             // 
@@ -178,23 +186,35 @@
             // 
             PauseBtn.BackgroundImage = (Image)resources.GetObject("PauseBtn.BackgroundImage");
             PauseBtn.BackgroundImageLayout = ImageLayout.Zoom;
-            PauseBtn.Location = new Point(857, 0);
-            PauseBtn.Margin = new Padding(3, 4, 3, 4);
+            PauseBtn.Location = new Point(750, 0);
             PauseBtn.Name = "PauseBtn";
-            PauseBtn.Size = new Size(50, 50);
+            PauseBtn.Size = new Size(44, 38);
             PauseBtn.TabIndex = 6;
             PauseBtn.UseVisualStyleBackColor = true;
             PauseBtn.Visible = false;
             PauseBtn.Click += pauseBtn_Click;
             // 
+            // Closebtn
+            // 
+            Closebtn.BackColor = Color.IndianRed;
+            Closebtn.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
+            Closebtn.Location = new Point(291, 430);
+            Closebtn.Name = "Closebtn";
+            Closebtn.Size = new Size(178, 45);
+            Closebtn.TabIndex = 7;
+            Closebtn.Text = "Exit";
+            Closebtn.UseVisualStyleBackColor = false;
+            Closebtn.Click += Closebtn_Click;
+            // 
             // View
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlDarkDark;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             BackgroundImageLayout = ImageLayout.Zoom;
-            ClientSize = new Size(914, 1055);
+            ClientSize = new Size(800, 791);
+            Controls.Add(Closebtn);
             Controls.Add(PauseBtn);
             Controls.Add(PausePanel);
             Controls.Add(LoadGameBtn);
@@ -203,8 +223,9 @@
             Controls.Add(SmallRadio);
             Controls.Add(NewGameBtn);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Margin = new Padding(3, 2, 3, 2);
             Name = "View";
-            Padding = new Padding(23, 27, 23, 27);
+            Padding = new Padding(20);
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Menekulj";
             PausePanel.ResumeLayout(false);
@@ -227,5 +248,7 @@
         private Button PauseLoadGameBtn;
         private Button PauseSaveGameBtn;
         private Button PauseBtn;
+        private Button Closebtn;
+        private Button PauseCloseBtn;
     }
 }

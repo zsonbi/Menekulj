@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Menekulj", "Menekulj\Menekulj.csproj", "{331685C2-23C9-4F4D-A691-A48F0FFB9424}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewForm", "Menekulj\ViewForm.csproj", "{331685C2-23C9-4F4D-A691-A48F0FFB9424}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "FormsTest\Tests.csproj", "{5E97217D-B5ED-4D58-B54C-C8FE60DE1FFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{5243CE54-93D6-4B7C-8CC4-675E13BD2F55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{5E97217D-B5ED-4D58-B54C-C8FE60DE1FFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E97217D-B5ED-4D58-B54C-C8FE60DE1FFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E97217D-B5ED-4D58-B54C-C8FE60DE1FFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5243CE54-93D6-4B7C-8CC4-675E13BD2F55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5243CE54-93D6-4B7C-8CC4-675E13BD2F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5243CE54-93D6-4B7C-8CC4-675E13BD2F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5243CE54-93D6-4B7C-8CC4-675E13BD2F55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

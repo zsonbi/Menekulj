@@ -30,7 +30,10 @@
             Assert.AreEqual(2, model.Enemies.Count);
             Assert.IsFalse(model.IsOver());
 
-            model.SaveGame("./testFile.json");
+            GameModel model2 = new GameModel(30, 97);
+            Assert.AreEqual(30, model2.MatrixSize);
+
+
         }
 
         [TestMethod()]
