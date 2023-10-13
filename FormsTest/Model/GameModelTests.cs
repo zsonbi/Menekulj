@@ -9,7 +9,7 @@
             GameModel model = new GameModel(10, 97);
             Assert.AreEqual<uint>(97, model.MineCount);
             Assert.AreEqual(10, model.MatrixSize);
-            Assert.AreEqual(10, model.Cells.GetLength(0));
+
             Assert.AreEqual(0, model.Player.Position.Row);
             Assert.AreEqual(0, model.Player.Position.Col);
 
@@ -19,7 +19,7 @@
             {
                 for (int j = 0; j < model.MatrixSize; j++)
                 {
-                    if (model.Cells[i, j] == Cell.Mine)
+                    if (model.GetCell(i, j) == Cell.Mine)
                     {
                         counter++;
                     }
@@ -37,12 +37,11 @@
         }
 
         [TestMethod()]
-        public void GameModelTestLoaded()
+        public void GameModelLoadTest()
         {
             GameModel model = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile1.json").Result;
             Assert.AreEqual<uint>(97, model.MineCount);
             Assert.AreEqual(10, model.MatrixSize);
-            Assert.AreEqual(10, model.Cells.GetLength(0));
             Assert.AreEqual(0, model.Player.Position.Row);
             Assert.AreEqual(0, model.Player.Position.Col);
 
@@ -52,7 +51,7 @@
             {
                 for (int j = 0; j < model.MatrixSize; j++)
                 {
-                    if (model.Cells[i, j] == Cell.Mine)
+                    if (model.GetCell(i, j) == Cell.Mine)
                     {
                         counter++;
                     }
@@ -85,11 +84,11 @@
             GameModel model1 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile1.json").Result;
             GameModel model2 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile2.json").Result;
 
-            model1.Tick(null, new EventArgs());
+            model1.Tick(null, EventArgs.Empty);
             Assert.IsTrue(model1.IsOver());
             Assert.IsFalse(model1.PlayerWon);
 
-            model2.Tick(null, new EventArgs());
+            model2.Tick(null, EventArgs.Empty);
             Assert.AreEqual(0, model2.Player.Position.Row);
             Assert.AreEqual(1, model2.Player.Position.Col);
             Assert.AreEqual(0, model2.Player.PrevPosition.Row);
@@ -137,7 +136,7 @@
         {
             GameModel model1 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile1.json").Result;
 
-            model1.Tick(null, new EventArgs());
+            model1.Tick(null, EventArgs.Empty);
             Assert.IsTrue(model1.IsOver());
             Assert.IsFalse(model1.PlayerWon);
         }
@@ -149,7 +148,7 @@
             model1.ChangePlayerDirection(Direction.Up);
 
             Assert.AreEqual(Direction.Up, model1.Player.LookingDirection);
-            model1.Tick(null, new EventArgs());
+            model1.Tick(null, EventArgs.Empty);
             Assert.IsTrue(model1.IsOver());
             Assert.IsTrue(model1.PlayerWon);
         }

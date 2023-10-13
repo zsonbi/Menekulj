@@ -38,7 +38,7 @@ namespace Menekulj.Persistance
             {
                 for (int j = 0; j < modelToSave.MatrixSize; j++)
                 {
-                    this.Cells[i *modelToSave.MatrixSize+ j] = modelToSave.Cells[i,j];
+                    this.Cells[i *modelToSave.MatrixSize+ j] = modelToSave.GetCell(i,j);
                 }
             }
 

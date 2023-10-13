@@ -12,6 +12,8 @@ namespace Menekulj.Persistance
 {
     public static class Persistance
     {
+      
+
         public static async Task<GameModel> LoadStateAsync(string filePath)
         {
           SaveGameState state=  JsonSerializer.Deserialize<SaveGameState>(await File.ReadAllTextAsync(filePath));

@@ -7,25 +7,25 @@ namespace Menekulj
     public partial class View : Form
     {
 
-        GameModel gameModel;
+        GameModel? gameModel;
         List<Control> elements = new List<Control>();
         Control[,] viewCells;
         private int width;
         private int height;
-        private const int padAmount = 20;
-        private const int topBarAmount = 70;
-        private System.Windows.Forms.Timer timer;
+        private const int PadAmount = 20;
+        private const int TopBarAmount = 70;
+        private System.Windows.Forms.Timer? timer;
 
         public View()
         {
             InitializeComponent();
-            width = this.Width - padAmount * 2;
-            height = this.Height - padAmount * 2 - topBarAmount;
+            width = this.Width - PadAmount * 2;
+            height = this.Height - PadAmount * 2 - TopBarAmount;
         }
 
 
 
-        private void CreateNewGame(byte boardSize = 0, uint mineCount = 0, GameModel gameModel = null)
+        private void CreateNewGame(byte boardSize = 0, uint mineCount = 0, GameModel? gameModel = null)
         {
             if (gameModel != null)
             {
@@ -77,12 +77,12 @@ namespace Menekulj
                     //A single cell is a disabled button -,- cool stuff...
                     Button cellButton = new Button();
                     cellButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point);
-                    cellButton.Location = new Point(padAmount + j * elementSize, padAmount + topBarAmount / 2 + i * elementSize);
+                    cellButton.Location = new Point(PadAmount + j * elementSize, PadAmount + TopBarAmount / 2 + i * elementSize);
                     cellButton.Name = "cell" + i + ";" + j;
                     cellButton.Size = new Size(elementSize - 1, elementSize - 1);
                     cellButton.TabIndex = 0;
                     cellButton.BackgroundImageLayout = ImageLayout.Stretch;
-                    switch (gameModel.Cells[i, j])
+                    switch (gameModel.GetCell(i,j))
                     {
                         case Cell.Empty:
                             break;
@@ -119,6 +119,11 @@ namespace Menekulj
 
         private void Update(object? sender, EventArgs args)
         {
+            if (gameModel == null)
+            {
+                throw new NoGameCreatedException();
+            }
+
             if (!gameModel.IsOver())
             {
                 gameModel.Tick(sender, args);
@@ -128,7 +133,9 @@ namespace Menekulj
 
             if (gameModel.IsOver())
             {
+                if (timer != null) { 
                 timer.Stop();
+                }
                 string message;
                 if (gameModel.PlayerWon)
                 {
@@ -153,6 +160,10 @@ namespace Menekulj
 
         private void UpdateView()
         {
+            if (gameModel == null)
+            {
+                throw new NoGameCreatedException();
+            }
             foreach (var enemy in gameModel.Enemies)
             {
 
@@ -169,10 +180,7 @@ namespace Menekulj
 
         private async Task<bool> LoadGame()
         {
-            if (gameModel != null)
-            {
-                gameModel.Pause();
-            }
+            gameModel?.Pause();
 
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.DefaultExt = ".json";
@@ -273,7 +281,9 @@ namespace Menekulj
 
         private void ResumeBtn_Click(object sender, EventArgs e)
         {
+            if (timer != null) { 
             timer.Start();
+            }
             PausePanel.Visible = false;
 
         }

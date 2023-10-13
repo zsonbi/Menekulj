@@ -108,6 +108,7 @@
             Assert.ThrowsException<UnitIsDeadException>(() => enemy.Move(Direction.Down));
         }
 
+        [TestMethod]
         public void DieTest()
         {
             GameModel model = new GameModel(10, 0);

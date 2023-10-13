@@ -1,20 +1,19 @@
 ﻿namespace Menekulj.Model
 {
-    public class GameModel
+    public class GameModel : IDisposable
     {
 
         public const int GameSpeed = 400; //Millis for a move to happen
         private static readonly Random rnd = new Random(); //Random for the mine spawning
-        private System.Timers.Timer timer; //Timer for the game on an additional thread (Deprecated)
+        private System.Timers.Timer? timer; //Timer for the game on an additional thread (Deprecated)
+        private Cell[,] cells; //The cells of the game board
+
 
         /// <summary>
         /// The number of mines in the game
         /// </summary>
         public uint MineCount { get; private set; }
-        /// <summary>
-        /// The cells of the game
-        /// </summary>
-        public Cell[,] Cells { get; private set; }
+
         /// <summary>
         /// The player
         /// </summary>
@@ -70,17 +69,36 @@
             this.Player.SetGame(this);
             this.MatrixSize = saveGameState.MatrixSize;
             this.MineCount = saveGameState.MineCount;
-            this.Cells = new Cell[this.MatrixSize, this.MatrixSize];
+            this.cells = new Cell[this.MatrixSize, this.MatrixSize];
             //Convert the 1d array into a 2d one
             for (int i = 0; i < this.MatrixSize; i++)
             {
                 for (int j = 0; j < this.MatrixSize; j++)
                 {
-                    this.Cells[i, j] = saveGameState.Cells[i * this.MatrixSize + j];
+                    this.cells[i, j] = saveGameState.Cells[i * this.MatrixSize + j];
                 }
             }
-
         }
+
+        /// <summary>
+        /// To delete the timer
+        /// </summary>
+        public void Dispose()
+        {
+            timer?.Dispose();
+        }
+
+        /// <summary>
+        /// Gets a single cell from the specified index
+        /// </summary>
+        /// <param name="row">The row index of the cell</param>
+        /// <param name="col">The col index of the cell</param>
+        /// <returns>The cell type</returns>
+        public Cell GetCell(int row, int col)
+        {
+            return cells[row,col];
+        }
+
 
         /// <summary>
         /// Creates the game's objects and places them at the correct positions
@@ -90,7 +108,7 @@
             //If it was called again
             this.Enemies.Clear();
 
-            this.Cells = new Cell[this.MatrixSize, this.MatrixSize];
+            this.cells = new Cell[this.MatrixSize, this.MatrixSize];
             this.Player = new Player(this, 0, 0);
             this.Enemies.Add(new Enemy(this, (byte)(this.MatrixSize - 1), 0));
             this.Enemies.Add(new Enemy(this, (byte)(this.MatrixSize - 1), (byte)(this.MatrixSize - 1)));
@@ -104,7 +122,7 @@
             {
                 for (int j = 0; j < this.MatrixSize; j++)
                 {
-                    if (Cells[i, j] == Cell.Empty)
+                    if (cells[i, j] == Cell.Empty)
                     {
                         possibleMineSpots.Add(new Position(i, j));
                     }
@@ -115,7 +133,7 @@
             for (int i = 0; i < MineCount; i++)
             {
                 int index = rnd.Next(possibleMineSpots.Count);
-                Cells[possibleMineSpots[index].Row, possibleMineSpots[index].Col] = Cell.Mine;
+                cells[possibleMineSpots[index].Row, possibleMineSpots[index].Col] = Cell.Mine;
                 possibleMineSpots.RemoveAt(index);
             }
         }
@@ -132,7 +150,7 @@
             {
                 for (byte j = 0; j < MatrixSize; j++)
                 {
-                    if (this.Cells[i, j] == Cell.Mine)
+                    if (this.cells[i, j] == Cell.Mine)
                     {
                         mines.Add(new Position(i, j));
                     }
@@ -209,10 +227,7 @@
             if (Running)
             {
                 Running = false;
-                if (timer != null)
-                {
-                    timer.Stop();
-                }
+                timer?.Stop();
             }
         }
 
@@ -253,7 +268,7 @@
             //Update the enemies
             foreach (var enemy in Enemies)
             {
-                Cells[enemy.PrevPosition.Row, enemy.PrevPosition.Col] = Cell.Empty;
+                cells[enemy.PrevPosition.Row, enemy.PrevPosition.Col] = Cell.Empty;
             }
 
             for (int i = 0; i < Enemies.Count; i++)
@@ -263,17 +278,17 @@
                     continue;
                 }
 
-                switch (Cells[Enemies[i].Position.Row, Enemies[i].Position.Col])
+                switch (cells[Enemies[i].Position.Row, Enemies[i].Position.Col])
                 {
                     case Cell.Empty:
-                        Cells[Enemies[i].Position.Row, Enemies[i].Position.Col] = Cell.Enemy;
+                        cells[Enemies[i].Position.Row, Enemies[i].Position.Col] = Cell.Enemy;
                         break;
                     case Cell.Player:
                         this.Player.Die();
                         return true;
-                        break;
+               
                     case Cell.Enemy:
-                        Cells[Enemies[i].Position.Row, Enemies[i].Position.Col] = Cell.Enemy;
+                        cells[Enemies[i].Position.Row, Enemies[i].Position.Col] = Cell.Enemy;
                         break;
                     case Cell.Mine:
                         Enemies[i].Die();
@@ -286,10 +301,10 @@
             }
 
             //Update the player
-            if (Cells[Player.Position.Row, Player.Position.Col] == Cell.Empty || Cells[Player.Position.Row, Player.Position.Col] == Cell.Player)
+            if (cells[Player.Position.Row, Player.Position.Col] == Cell.Empty || cells[Player.Position.Row, Player.Position.Col] == Cell.Player)
             {
-                Cells[Player.PrevPosition.Row, Player.PrevPosition.Col] = Cell.Empty;
-                Cells[Player.Position.Row, Player.Position.Col] = Cell.Player;
+                cells[Player.PrevPosition.Row, Player.PrevPosition.Col] = Cell.Empty;
+                cells[Player.Position.Row, Player.Position.Col] = Cell.Player;
             }
             else
             {
@@ -301,5 +316,6 @@
             return false;
         }
 
+       
     }
 }

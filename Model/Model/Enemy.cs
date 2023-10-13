@@ -57,7 +57,6 @@ namespace Menekulj.Model
             if (least > newLeast)
             {
                 dir = Direction.Down;
-                least = newLeast;
             }
 
             return dir;

@@ -93,7 +93,7 @@ namespace Menekulj.Model.Tests
             Assert.ThrowsException<UnitIsDeadException>(() => player.Move());
         }
 
-
+        [TestMethod]
         public void DieTest()
         {
             GameModel model = new GameModel(10, 0);
