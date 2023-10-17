@@ -1,6 +1,5 @@
 using Menekulj.Model;
 
-
 namespace Menekulj
 {
 

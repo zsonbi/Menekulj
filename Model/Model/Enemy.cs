@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Menekulj.Model;
 
 namespace Menekulj.Model
 {
@@ -36,24 +37,24 @@ namespace Menekulj.Model
         public Direction CalculateMoveDir(Position playerPos)
         {
             Direction dir = Direction.Left;
-            float least = playerPos.DistanceTo(this.Position.Row, this.Position.Col - 1);
+            float least = playerPos.DistanceTo(Position.Row, Position.Col - 1);
 
             //Calculated the top cell's distance
-            float newLeast = playerPos.DistanceTo(this.Position.Row - 1, this.Position.Col);
+            float newLeast = playerPos.DistanceTo(Position.Row - 1, Position.Col);
             if (least > newLeast)
             {
                 dir = Direction.Up;
                 least = newLeast;
             }
             //Calculate the right cell's distance
-            newLeast = playerPos.DistanceTo(this.Position.Row, this.Position.Col + 1);
+            newLeast = playerPos.DistanceTo(Position.Row, Position.Col + 1);
             if (least > newLeast)
             {
                 dir = Direction.Right;
                 least = newLeast;
             }
             //Calculate the bottom cell's distance
-            newLeast = playerPos.DistanceTo(this.Position.Row + 1, this.Position.Col);
+            newLeast = playerPos.DistanceTo(Position.Row + 1, Position.Col);
             if (least > newLeast)
             {
                 dir = Direction.Down;

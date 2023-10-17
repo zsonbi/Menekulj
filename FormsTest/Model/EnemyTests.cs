@@ -1,4 +1,5 @@
-﻿namespace Menekulj.Model.Tests
+﻿
+namespace Menekulj.Model.Tests
 {
     [TestClass]
     public class EnemyTests

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Menekulj.Model;
 
 namespace Menekulj.Model
 {
@@ -34,9 +35,9 @@ namespace Menekulj.Model
                 throw new ArgumentException("The unit is out of bounds of the game");
             }
 
-            this.Position = new Position(row, col);
+            Position = new Position(row, col);
             //Also set the previous position to it to avoid nullpointerexception
-            this.PrevPosition = new Position(row, col);
+            PrevPosition = new Position(row, col);
         }
 
         /// <summary>
@@ -70,8 +71,8 @@ namespace Menekulj.Model
         /// <param name="newCol">The column to move to</param>
         public void MoveTo(byte newRow, byte newCol)
         {
-            this.PrevPosition.SetPosition(this.Position);
-            this.Position.SetPosition(newRow, newCol);
+            PrevPosition.SetPosition(Position);
+            Position.SetPosition(newRow, newCol);
         }
 
         /// <summary>
@@ -80,7 +81,7 @@ namespace Menekulj.Model
         /// <param name="dir">Direction to move towards</param>
         public void Move(Direction dir)
         {
-            if (this.Dead)
+            if (Dead)
             {
                 throw new UnitIsDeadException();
             }
@@ -91,32 +92,32 @@ namespace Menekulj.Model
             }
 
             //Change the previous position
-            this.PrevPosition.SetPosition(this.Position);
+            PrevPosition.SetPosition(Position);
             //Move towards the appropiate (row,col)
             switch (dir)
             {
                 case Direction.Left:
-                    if (this.Position.Col - 1 >= 0)
+                    if (Position.Col - 1 >= 0)
                     {
-                        this.Position.SetCol(this.Position.Col - 1);
+                        Position.SetCol(Position.Col - 1);
                     }
                     break;
                 case Direction.Up:
-                    if (this.Position.Row - 1 >= 0)
+                    if (Position.Row - 1 >= 0)
                     {
-                        this.Position.SetRow(this.Position.Row - 1);
+                        Position.SetRow(Position.Row - 1);
                     }
                     break;
                 case Direction.Right:
-                    if (this.Position.Col + 1 < game.MatrixSize)
+                    if (Position.Col + 1 < game.MatrixSize)
                     {
-                        this.Position.SetCol(this.Position.Col + 1);
+                        Position.SetCol(Position.Col + 1);
                     }
                     break;
                 case Direction.Down:
-                    if (this.Position.Row + 1 < game.MatrixSize)
+                    if (Position.Row + 1 < game.MatrixSize)
                     {
-                        this.Position.SetRow(this.Position.Row + 1);
+                        Position.SetRow(Position.Row + 1);
                     }
                     break;
                 default:
@@ -130,7 +131,7 @@ namespace Menekulj.Model
         /// </summary>
         public void Die()
         {
-            this.Dead = true;
+            Dead = true;
         }
     }
 }

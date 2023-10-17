@@ -1,5 +1,4 @@
-﻿
-namespace Menekulj.Model
+﻿namespace Menekulj.Model
 {
     /// <summary>
     /// Direction for movement

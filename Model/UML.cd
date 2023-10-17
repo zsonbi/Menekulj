@@ -1,37 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Menekulj.Model.Enemy">
-    <Position X="10.5" Y="4.75" Width="1.5" />
-    <InheritanceLine Type="Menekulj.Model.Unit" FixedToPoint="true">
-      <Path>
-        <Point X="10" Y="2.824" />
-        <Point X="10" Y="3.875" />
-        <Point X="11.312" Y="3.875" />
-        <Point X="11.312" Y="4.75" />
-      </Path>
-    </InheritanceLine>
+    <Position X="10.75" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
       <FileName>Model\Enemy.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Menekulj.Model.GameModel">
-    <Position X="13.25" Y="0.5" Width="2" />
+  <Class Name="Menekulj.Model.GameModel" BaseTypeListCollapsed="true">
+    <Position X="13.25" Y="1" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>wAQkABAAACAQBAAAgAIAQAUgAgEAAAAICAAAASgAQAA=</HashCode>
+      <HashCode>wAQkABAAACAQBAAAgAAAQAUiAgEAAAAICAAAASgAQAA=</HashCode>
       <FileName>Model\GameModel.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="Cells" />
       <Property Name="Player" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
+      <Field Name="cells" />
       <Property Name="Enemies" />
     </ShowAsCollectionAssociation>
-    <Lollipop Position="0.2" />
+    <Lollipop Position="0.164" />
   </Class>
   <Class Name="Menekulj.Model.Player">
-    <Position X="7.75" Y="4.25" Width="1.5" />
+    <Position X="6" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAEAAAAAAAAAAAAACAAAAAAAA=</HashCode>
       <FileName>Model\Player.cs</FileName>
@@ -41,39 +33,46 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="Menekulj.Model.Position">
-    <Position X="6.75" Y="0.5" Width="1.5" />
+    <Position X="5.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AQACAAAAAAAACACAgAAAAAAAAAEAAgAAAAAAAAAAAAA=</HashCode>
       <FileName>Model\Position.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Menekulj.Model.Unit">
-    <Position X="9.25" Y="0.5" Width="1.5" />
+    <Position X="8.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>gAAAAAAAAIAEAAAgAAAAAAAAAAAIAAAIAAAACAAAAAA=</HashCode>
       <FileName>Model\Unit.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="game" />
       <Property Name="Position" />
       <Property Name="PrevPosition" />
     </ShowAsAssociation>
   </Class>
   <Class Name="Menekulj.Persistance.Persistance">
-    <Position X="15.5" Y="3" Width="1.5" />
+    <Position X="15" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
       <FileName>Persistance\Persistance.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Struct Name="Menekulj.Persistance.SaveGameState">
-    <Position X="17" Y="3.25" Width="1.5" />
+    <Position X="16.75" Y="4.25" Width="1.5" />
+    <AssociationLine Name="Enemies" Type="Menekulj.Model.Enemy" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="17.562" Y="5.997" />
+        <Point X="17.562" Y="7.604" />
+        <Point X="11.5" Y="7.604" />
+        <Point X="11.5" Y="6.925" />
+      </Path>
+    </AssociationLine>
     <AssociationLine Name="Player" Type="Menekulj.Model.Player" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="17.75" Y="4.997" />
-        <Point X="17.75" Y="6.425" />
-        <Point X="8.5" Y="6.425" />
-        <Point X="8.5" Y="5.867" />
+        <Point X="17.562" Y="5.997" />
+        <Point X="17.562" Y="7.604" />
+        <Point X="6.75" Y="7.604" />
+        <Point X="6.75" Y="6.867" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -82,21 +81,21 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Player" />
-      <Property Name="Cells" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
+      <Property Name="Cells" />
       <Property Name="Enemies" />
     </ShowAsCollectionAssociation>
   </Struct>
   <Enum Name="Menekulj.Model.Cell">
-    <Position X="16" Y="0.5" Width="1.5" />
+    <Position X="17.25" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIAAgAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
       <FileName>Model\Cell.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Enum Name="Menekulj.Model.Direction">
-    <Position X="4.5" Y="4.5" Width="1.5" />
+    <Position X="2" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAACACAAAAAAAI=</HashCode>
       <FileName>Model\Direction.cs</FileName>

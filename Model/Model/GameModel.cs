@@ -1,4 +1,6 @@
-﻿namespace Menekulj.Model
+﻿
+
+namespace Menekulj.Model
 {
     public class GameModel : IDisposable
     {

@@ -21,8 +21,8 @@
         /// <param name="col">The col (x)</param>
         public Position(int row, int col)
         {
-            this.Row = row;
-            this.Col = col;
+            Row = row;
+            Col = col;
         }
 
         /// <summary>
@@ -32,8 +32,8 @@
         /// <param name="col">New column</param>
         public void SetPosition(int row, int col)
         {
-            this.Row = row;
-            this.Col = col;
+            Row = row;
+            Col = col;
         }
 
         /// <summary>
@@ -42,8 +42,8 @@
         /// <param name="pos">The position to copy</param>
         public void SetPosition(Position pos)
         {
-            this.Row = pos.Row;
-            this.Col = pos.Col;
+            Row = pos.Row;
+            Col = pos.Col;
         }
 
         /// <summary>
@@ -52,7 +52,7 @@
         /// <param name="col">The new column value</param>
         public void SetCol(int col)
         {
-            this.Col = col;
+            Col = col;
         }
 
         /// <summary>
@@ -61,7 +61,7 @@
         /// <param name="row">The now row value</param>
         public void SetRow(int row)
         {
-            this.Row = row;
+            Row = row;
         }
 
         /// <summary>
@@ -71,7 +71,7 @@
         /// <returns>The distance between the two positions</returns>
         public float CalcDistance(Position other)
         {
-            return (float)Math.Sqrt(Math.Pow(this.Row - other.Row, 2) + Math.Pow(this.Col - other.Col, 2));
+            return (float)Math.Sqrt(Math.Pow(Row - other.Row, 2) + Math.Pow(Col - other.Col, 2));
         }
 
         /// <summary>
@@ -82,7 +82,7 @@
         /// <returns>The distance between the two positions</returns>
         public float DistanceTo(int row, int col)
         {
-            return (float)Math.Sqrt(Math.Pow(this.Row - row, 2) + Math.Pow(this.Col - col, 2));
+            return (float)Math.Sqrt(Math.Pow(Row - row, 2) + Math.Pow(Col - col, 2));
         }
 
         /// <summary>
@@ -92,7 +92,7 @@
         /// <returns>true-if the row and col is the same  false-otherwise</returns>
         public bool Equals(Position other)
         {
-            return this.Row == other.Row && this.Col == other.Col;
+            return Row == other.Row && Col == other.Col;
         }
     }
 }

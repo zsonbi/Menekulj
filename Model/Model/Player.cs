@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Menekulj.Model;
 
 namespace Menekulj.Model
 {
@@ -31,7 +32,7 @@ namespace Menekulj.Model
         [JsonConstructor]
         public Player(Position Position, Position PrevPosition, bool Dead, Direction lookingDirection) : base(Position, PrevPosition, Dead)
         {
-            this.LookingDirection = lookingDirection;
+            LookingDirection = lookingDirection;
         }
 
         /// <summary>
@@ -40,7 +41,7 @@ namespace Menekulj.Model
         /// <param name="lookingDirection">The new lookingdirection</param>
         public void SetDirection(Direction lookingDirection)
         {
-            this.LookingDirection = lookingDirection;
+            LookingDirection = lookingDirection;
         }
 
         /// <summary>
@@ -48,12 +49,12 @@ namespace Menekulj.Model
         /// </summary>
         public void Move()
         {
-            if (this.Dead)
+            if (Dead)
             {
                 throw new UnitIsDeadException();
             }
 
-            base.Move(LookingDirection);
+            Move(LookingDirection);
         }
 
     }
