@@ -1,16 +1,15 @@
-﻿
-
-namespace Menekulj.Model
+﻿namespace Menekulj.Model
 {
-    public class GameModel : IDisposable
+    public class GameModel
     {
+
+        public event EventHandler? UpdateView;
+        public event EventHandler? GameOver;
+
 
         public const int GameSpeed = 400; //Millis for a move to happen
         private static readonly Random rnd = new Random(); //Random for the mine spawning
-        private System.Timers.Timer? timer; //Timer for the game on an additional thread (Deprecated)
         private Cell[,] cells; //The cells of the game board
-
-
         /// <summary>
         /// The number of mines in the game
         /// </summary>
@@ -52,6 +51,11 @@ namespace Menekulj.Model
 
             this.MineCount = mineCount;
             this.MatrixSize = mapSize;
+            this.cells = new Cell[this.MatrixSize, this.MatrixSize];
+
+            this.Player = new Player(this, 0, 0);
+            this.Enemies.Add(new Enemy(this, (byte)(this.MatrixSize - 1), 0));
+            this.Enemies.Add(new Enemy(this, (byte)(this.MatrixSize - 1), (byte)(this.MatrixSize - 1)));
 
             CreateGameBoard();
         }
@@ -82,13 +86,7 @@ namespace Menekulj.Model
             }
         }
 
-        /// <summary>
-        /// To delete the timer
-        /// </summary>
-        public void Dispose()
-        {
-            timer?.Dispose();
-        }
+
 
         /// <summary>
         /// Gets a single cell from the specified index
@@ -98,7 +96,7 @@ namespace Menekulj.Model
         /// <returns>The cell type</returns>
         public Cell GetCell(int row, int col)
         {
-            return cells[row,col];
+            return cells[row, col];
         }
 
 
@@ -107,13 +105,8 @@ namespace Menekulj.Model
         /// </summary>
         private void CreateGameBoard()
         {
-            //If it was called again
-            this.Enemies.Clear();
 
-            this.cells = new Cell[this.MatrixSize, this.MatrixSize];
-            this.Player = new Player(this, 0, 0);
-            this.Enemies.Add(new Enemy(this, (byte)(this.MatrixSize - 1), 0));
-            this.Enemies.Add(new Enemy(this, (byte)(this.MatrixSize - 1), (byte)(this.MatrixSize - 1)));
+
 
             //Put the player and the enemies into the cells 2d array
             UpdateCells();
@@ -167,19 +160,12 @@ namespace Menekulj.Model
         /// </summary>
         /// <param name="sender">The object which triggered this event</param>
         /// <param name="args">What was the event</param>
-        public void Tick(object? sender, EventArgs args)
+        public async Task Tick()
         {
             HandleMovement();
-
             UpdateCells();
+            UpdateView?.Invoke(this, EventArgs.Empty);
 
-            if (IsOver())
-            {
-                this.Running = false;
-                //If the game was ran by the StartGame() method 
-                if (timer != null && timer.Enabled)
-                    timer.Stop();
-            }
 
         }
 
@@ -188,18 +174,35 @@ namespace Menekulj.Model
         /// <param name="speed">Optional speed parameter for the game</param>
         /// </summary>
         /// <exception cref="AlreadyRunningException">Throws exception if the game is already running</exception>
-        public void StartGame(int speed = GameSpeed)
+        public async Task StartGame(int speed = GameSpeed)
         {
             if (Running)
             {
                 throw new AlreadyRunningException();
             }
-
-            timer = new System.Timers.Timer();
-            timer.Interval = speed;
-            timer.Elapsed += Tick;
-            timer.Start();
             Running = true;
+            while (Running)
+            {
+
+                await Tick();
+                if (IsOver())
+                {
+                    this.Running = false;
+
+                    GameOver?.Invoke(this, EventArgs.Empty);
+                    return;
+                }
+                else
+                {
+                    await Task.Delay(speed);
+                }
+            }
+
+            //timer = new System.Timers.Timer();
+            //timer.Interval = speed;
+            //timer.Elapsed += Tick;
+            //timer.Start();
+
         }
 
         /// <summary>
@@ -229,7 +232,6 @@ namespace Menekulj.Model
             if (Running)
             {
                 Running = false;
-                timer?.Stop();
             }
         }
 
@@ -238,12 +240,9 @@ namespace Menekulj.Model
         /// </summary>
         public void Resume()
         {
-            if (!Running && timer != null)
+            if (!Running)
             {
                 this.Running = true;
-
-                timer.Start();
-
             }
         }
 
@@ -288,7 +287,7 @@ namespace Menekulj.Model
                     case Cell.Player:
                         this.Player.Die();
                         return true;
-               
+
                     case Cell.Enemy:
                         cells[Enemies[i].Position.Row, Enemies[i].Position.Col] = Cell.Enemy;
                         break;
@@ -318,6 +317,6 @@ namespace Menekulj.Model
             return false;
         }
 
-       
+
     }
 }

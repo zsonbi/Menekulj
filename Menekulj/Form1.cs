@@ -8,23 +8,23 @@ namespace Menekulj
 
         GameModel? gameModel;
         List<Control> elements = new List<Control>();
-        Control[,] viewCells;
+        Control[,]? viewCells;
         private int width;
         private int height;
         private const int PadAmount = 20;
         private const int TopBarAmount = 70;
-        private System.Windows.Forms.Timer? timer;
 
         public View()
         {
             InitializeComponent();
             width = this.Width - PadAmount * 2;
             height = this.Height - PadAmount * 2 - TopBarAmount;
+
         }
 
 
 
-        private void CreateNewGame(byte boardSize = 0, uint mineCount = 0, GameModel? gameModel = null)
+        private async Task CreateNewGame(byte boardSize = 0, uint mineCount = 0, GameModel? gameModel = null)
         {
             if (gameModel != null)
             {
@@ -34,13 +34,13 @@ namespace Menekulj
             else
             {
                 this.gameModel = new GameModel(boardSize, mineCount);
-
             }
             CreateView();
-            timer = new System.Windows.Forms.Timer();
-            timer.Interval = GameModel.GameSpeed;
-            timer.Tick += Update;
-            timer.Start();
+
+            this.gameModel!.UpdateView += UpdateView;
+            this.gameModel!.GameOver += GameOver;
+            await this.gameModel!.StartGame();
+
         }
 
 
@@ -81,7 +81,7 @@ namespace Menekulj
                     cellButton.Size = new Size(elementSize - 1, elementSize - 1);
                     cellButton.TabIndex = 0;
                     cellButton.BackgroundImageLayout = ImageLayout.Stretch;
-                    switch (gameModel.GetCell(i,j))
+                    switch (gameModel.GetCell(i, j))
                     {
                         case Cell.Empty:
                             break;
@@ -116,49 +116,39 @@ namespace Menekulj
             ResumeLayout(false);
         }
 
-        private void Update(object? sender, EventArgs args)
+
+
+        private async void GameOver(object? sender, EventArgs args)
         {
-            if (gameModel == null)
+
+            string message;
+            if (gameModel!.PlayerWon)
             {
-                throw new NoGameCreatedException();
+                message = "You won! Want to try again?";
             }
-
-            if (!gameModel.IsOver())
+            else
             {
-                gameModel.Tick(sender, args);
-                UpdateView();
+                message = "Game over! You died :C Want to try again?";
 
             }
-
-            if (gameModel.IsOver())
+            if (MessageBox.Show(message, "Result", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
             {
-                if (timer != null) { 
-                timer.Stop();
-                }
-                string message;
-                if (gameModel.PlayerWon)
-                {
-                    message = "You won! Want to try again?";
-                }
-                else
-                {
-                    message = "Game over! You died :C Want to try again?";
 
-                }
-                if (MessageBox.Show(message, "Result", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
-                {
-                    CreateNewGame(gameModel.MatrixSize, gameModel.MineCount);
-                }
-                else
-                {
-                    Close();
-                }
+                await CreateNewGame(gameModel.MatrixSize, gameModel.MineCount);
             }
-
+            else
+            {
+                Close();
+            }
         }
 
-        private void UpdateView()
+        private void UpdateView(object? sender, EventArgs args)
         {
+            if (viewCells == null)
+            {
+                throw new NullReferenceException();
+            }
+
             if (gameModel == null)
             {
                 throw new NoGameCreatedException();
@@ -179,13 +169,23 @@ namespace Menekulj
 
         private async Task<bool> LoadGame()
         {
-            gameModel?.Pause();
 
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.DefaultExt = ".json";
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+
+                GameModel loadedModel;
+                try
+                {
+                    loadedModel = await Persistance.Persistance.LoadStateAsync(dialog.FileName);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("This save file is invalid or corrupted");
+                    return false;
+                }
                 if (gameModel == null)
                 {
                     NewGameBtn.Hide();
@@ -198,11 +198,8 @@ namespace Menekulj
                 }
 
 
-                GameModel loadedModel = await Persistance.Persistance.LoadStateAsync(dialog.FileName);
 
-
-
-                CreateNewGame(gameModel: loadedModel);
+                await CreateNewGame(gameModel: loadedModel);
                 return true;
             }
             else
@@ -217,7 +214,7 @@ namespace Menekulj
         //Events
         //**********************************************************************************************************
 
-        private void NewGameBtn_Click(object sender, EventArgs e)
+        private async void NewGameBtn_Click(object sender, EventArgs e)
         {
             NewGameBtn.Hide();
             SmallRadio.Hide();
@@ -229,15 +226,15 @@ namespace Menekulj
 
             if (SmallRadio.Checked)
             {
-                CreateNewGame(11, 7);
+                await CreateNewGame(11, 7);
             }
             else if (MediumRadio.Checked)
             {
-                CreateNewGame(15, 14);
+                await CreateNewGame(15, 14);
             }
             else
             {
-                CreateNewGame(21, 21);
+                await CreateNewGame(21, 21);
             }
         }
 
@@ -280,9 +277,11 @@ namespace Menekulj
 
         private void ResumeBtn_Click(object sender, EventArgs e)
         {
-            if (timer != null) { 
-            timer.Start();
+            if (gameModel is null)
+            {
+                throw new NoGameCreatedException();
             }
+            gameModel!.Resume();
             PausePanel.Visible = false;
 
         }
@@ -301,7 +300,16 @@ namespace Menekulj
 
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                await gameModel.SaveGame($"{folderBrowserDialog.SelectedPath}\\{DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH'-'mm'-'ss")}save.json");
+                try
+                {
+                    await gameModel.SaveGame($"{folderBrowserDialog.SelectedPath}\\{DateTime.Now.ToString("yyyy'-'MM'-'dd'T'HH'-'mm'-'ss")}save.json");
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Error while saving the game");
+                }
+
+
             }
 
         }
@@ -325,12 +333,11 @@ namespace Menekulj
 
         private void pauseBtn_Click(object sender, EventArgs e)
         {
-            if (gameModel == null || timer == null || !timer.Enabled)
+            if (gameModel == null)
             {
-                return;
+                throw new NoGameCreatedException();
             }
-
-            timer.Stop();
+            gameModel.Pause();
             PausePanel.Visible = true;
         }
 

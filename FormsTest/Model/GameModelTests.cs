@@ -80,16 +80,16 @@ namespace Menekulj.Model.Tests
         }
 
         [TestMethod()]
-        public void TickTest()
+        public async Task TickTest()
         {
             GameModel model1 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile1.json").Result;
             GameModel model2 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile2.json").Result;
 
-            model1.Tick(null, EventArgs.Empty);
+            await model1.Tick();
             Assert.IsTrue(model1.IsOver());
             Assert.IsFalse(model1.PlayerWon);
 
-            model2.Tick(null, EventArgs.Empty);
+            await model2.Tick();
             Assert.AreEqual(0, model2.Player.Position.Row);
             Assert.AreEqual(1, model2.Player.Position.Col);
             Assert.AreEqual(0, model2.Player.PrevPosition.Row);
@@ -101,64 +101,64 @@ namespace Menekulj.Model.Tests
         }
 
         [TestMethod()]
-        public void StartGameTest()
+        public async Task StartGameTest()
         {
             GameModel model1 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile1.json").Result;
             GameModel model2 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile2.json").Result;
             GameModel model3 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile3.json").Result;
 
-            model1.StartGame();
-            while (!model1.IsOver())
-            {
-            }
+            await model1.StartGame();
+            //while (!model1.IsOver())
+            //{
+            //}
 
             Assert.IsTrue(model1.IsOver());
             Assert.IsFalse(model1.PlayerWon);
 
-            model2.StartGame(10);
-            while (!model2.IsOver())
-            {
-            }
+            await model2.StartGame(10);
+            //while (!model2.IsOver())
+            //{
+            //}
             Assert.IsTrue(model2.IsOver());
             Assert.IsFalse(model2.PlayerWon);
 
 
-            model3.StartGame(10);
-            while (!model3.IsOver())
-            {
+            await model3.StartGame(10);
+            //while (!model3.IsOver())
+            //{
 
-            }
+            //}
             Assert.IsTrue(model3.IsOver());
             Assert.IsFalse(model3.PlayerWon);
         }
 
         [TestMethod()]
-        public void IsOverTest()
+        public async Task IsOverTest()
         {
             GameModel model1 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile1.json").Result;
 
-            model1.Tick(null, EventArgs.Empty);
+            await model1.Tick();
             Assert.IsTrue(model1.IsOver());
             Assert.IsFalse(model1.PlayerWon);
         }
 
         [TestMethod()]
-        public void ChangePlayerDirectionTest()
+        public async Task ChangePlayerDirectionTest()
         {
             GameModel model1 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile1.json").Result;
             model1.ChangePlayerDirection(Direction.Up);
 
             Assert.AreEqual(Direction.Up, model1.Player.LookingDirection);
-            model1.Tick(null, EventArgs.Empty);
+            await model1.Tick();
             Assert.IsTrue(model1.IsOver());
             Assert.IsTrue(model1.PlayerWon);
         }
 
         [TestMethod()]
-        public void SaveGameTest()
+        public async Task SaveGameTest()
         {
             GameModel model = new GameModel(10, 10);
-            model.SaveGame("SaveGameTestJson1234141.json");
+            await model.SaveGame("SaveGameTestJson1234141.json");
 
             GameModel loadedModel = Persistance.Persistance.LoadStateAsync("SaveGameTestJson1234141.json").Result;
 
@@ -182,10 +182,10 @@ namespace Menekulj.Model.Tests
         }
 
         [TestMethod()]
-        public void ResumeTest()
+        public async Task ResumeTest()
         {
             GameModel model2 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile2.json").Result;
-            model2.StartGame(100);
+            await model2.StartGame(100);
 
             Assert.IsTrue(model2.Running);
 
