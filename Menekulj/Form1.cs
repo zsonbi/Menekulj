@@ -39,7 +39,7 @@ namespace Menekulj
 
             this.gameModel!.UpdateView += UpdateView;
             this.gameModel!.GameOver += GameOver;
-            await this.gameModel!.StartGame();
+            Task.Run(() => this.gameModel!.StartGame());
 
         }
 
@@ -134,7 +134,7 @@ namespace Menekulj
             if (MessageBox.Show(message, "Result", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
             {
 
-                await CreateNewGame(gameModel.MatrixSize, gameModel.MineCount);
+                await this.Invoke(() => CreateNewGame(gameModel.MatrixSize, gameModel.MineCount));
             }
             else
             {
@@ -281,8 +281,9 @@ namespace Menekulj
             {
                 throw new NoGameCreatedException();
             }
-            gameModel!.Resume();
             PausePanel.Visible = false;
+            gameModel!.Resume();
+
 
         }
 

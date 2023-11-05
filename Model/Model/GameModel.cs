@@ -9,6 +9,7 @@
 
         public const int GameSpeed = 400; //Millis for a move to happen
         private static readonly Random rnd = new Random(); //Random for the mine spawning
+        private bool started = false;
         private Cell[,] cells; //The cells of the game board
         /// <summary>
         /// The number of mines in the game
@@ -35,6 +36,7 @@
         /// Get if the game is running (only checks if it was started with StartGame) (Deprecated)
         /// </summary>
         public bool Running { get; private set; } = false;
+
 
         /// <summary>
         /// Creates a new game model
@@ -176,13 +178,22 @@
         /// <exception cref="AlreadyRunningException">Throws exception if the game is already running</exception>
         public async Task StartGame(int speed = GameSpeed)
         {
-            if (Running)
+            if (Running || started)
             {
                 throw new AlreadyRunningException();
             }
+            await Task.Delay(speed);
             Running = true;
-            while (Running)
+            started = true;
+
+            while (true)
             {
+                if (!Running)
+                {
+                    await Task.Delay(speed);
+                    continue;
+                }
+
 
                 await Tick();
                 if (IsOver())
@@ -198,10 +209,6 @@
                 }
             }
 
-            //timer = new System.Timers.Timer();
-            //timer.Interval = speed;
-            //timer.Elapsed += Tick;
-            //timer.Start();
 
         }
 
@@ -242,7 +249,7 @@
         {
             if (!Running)
             {
-                this.Running = true;
+                Running = true;
             }
         }
 

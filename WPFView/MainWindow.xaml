@@ -1,0 +1,80 @@
+﻿<Window x:Class="WPFView.View"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFView"
+        mc:Ignorable="d"
+        Title="Menekulj" Height="800" Width="800" MinHeight="600px" MinWidth="400px" KeyDown="Window_KeyDown">
+    <Window.Resources>
+        <Style TargetType="Button" >
+            <Setter Property="FontSize" Value="50"></Setter>
+            <Setter Property="Margin" Value="10"></Setter>
+        </Style>
+        <Style TargetType="RadioButton" >
+            <Setter Property="FontSize" Value="30"></Setter>
+            <Setter Property="Margin" Value="10,2"></Setter>
+            <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+            
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80px"></RowDefinition>
+            <RowDefinition Height="10*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+
+
+
+
+        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2,2,2,3" Margin="35,10">
+        <Grid x:Name="Board">
+            
+        </Grid>
+        </Border>
+
+        <Grid Name="MainMenu" Grid.RowSpan="2">
+            <Grid.Background>
+                <ImageBrush ImageSource="./Images/mainmenubackground.jpg"></ImageBrush>
+            </Grid.Background>
+            
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition MinWidth="380px"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+
+            <StackPanel Name="MenuStackPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">
+
+                <Button Content="Resume" Name="ResumeBtn" Click="ResumeBtn_Click" Visibility="Collapsed"/>
+                
+                <Button Content="New Game" Name="NewGameBtn" Click="NewGameBtn_Click"/>
+
+                <Button Content="Save Game" Name="SaveGameBtn" Click="SaveGameBtn_Click" Visibility="Collapsed"/>
+                
+                <Button Content="Load Game" Name="LoadGameBtn" Click="LoadGameBtn_Click"/>
+          
+          
+    
+
+                    <RadioButton Content="Small map" Name="SmallBoardRadio" IsChecked="True" GroupName="mapSize"></RadioButton>
+                    <RadioButton Content="Medium map" Name="MediumBoardRadio" GroupName="mapSize"></RadioButton>
+                    <RadioButton Content="Big map" Name="BigBoardRadio" GroupName="mapSize"></RadioButton>
+
+                <Button Content="Exit" Name="ExitBtn" Background="Red" Click="ExitBtn_Click"/>
+
+            </StackPanel>    
+        </Grid>
+
+
+
+
+        <Button HorizontalAlignment="Right" Grid.Row="0" FontSize="25" Width="120" Name="PauseBtn" Visibility="Hidden" Content="Pause" Click="pauseBtn_Click"/>
+
+
+    </Grid>
+</Window>

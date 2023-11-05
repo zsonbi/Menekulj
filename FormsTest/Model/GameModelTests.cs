@@ -184,9 +184,9 @@ namespace Menekulj.Model.Tests
         [TestMethod()]
         public async Task ResumeTest()
         {
-            GameModel model2 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile2.json").Result;
-            await model2.StartGame(100);
-
+            GameModel model2 = Persistance.Persistance.LoadStateAsync("TestInputFiles/testFile3.json").Result;
+            Task.Run(() => model2.StartGame(100));
+            await Task.Delay(250);
             Assert.IsTrue(model2.Running);
 
             model2.Pause();
@@ -194,6 +194,8 @@ namespace Menekulj.Model.Tests
             Assert.IsFalse(model2.Running);
 
             model2.Resume();
+            await Task.Delay(250);
+
 
             Assert.IsTrue(model2.Running);
 

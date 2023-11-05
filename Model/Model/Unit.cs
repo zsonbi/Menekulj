@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using Menekulj.Model;
 
 namespace Menekulj.Model
 {

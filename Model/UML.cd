@@ -10,7 +10,7 @@
   <Class Name="Menekulj.Model.GameModel" BaseTypeListCollapsed="true">
     <Position X="13.25" Y="1" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>wAQkABAAACAQBAAAgAAAQAUiAgEAAAAICAAAASgAQAA=</HashCode>
+      <HashCode>wAAkgRAAAAAQBAAAgAAAQgUiAgEAAAAICAAAASgAQAA=</HashCode>
       <FileName>Model\GameModel.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -20,7 +20,6 @@
       <Field Name="cells" />
       <Property Name="Enemies" />
     </ShowAsCollectionAssociation>
-    <Lollipop Position="0.164" />
   </Class>
   <Class Name="Menekulj.Model.Player">
     <Position X="6" Y="5.25" Width="1.5" />
@@ -46,6 +45,7 @@
       <FileName>Model\Unit.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
+      <Field Name="game" />
       <Property Name="Position" />
       <Property Name="PrevPosition" />
     </ShowAsAssociation>
@@ -59,20 +59,20 @@
   </Class>
   <Struct Name="Menekulj.Persistance.SaveGameState">
     <Position X="16.75" Y="4.25" Width="1.5" />
-    <AssociationLine Name="Enemies" Type="Menekulj.Model.Enemy" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="17.562" Y="5.997" />
-        <Point X="17.562" Y="7.604" />
-        <Point X="11.5" Y="7.604" />
-        <Point X="11.5" Y="6.925" />
-      </Path>
-    </AssociationLine>
     <AssociationLine Name="Player" Type="Menekulj.Model.Player" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="17.562" Y="5.997" />
         <Point X="17.562" Y="7.604" />
         <Point X="6.75" Y="7.604" />
         <Point X="6.75" Y="6.867" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Enemies" Type="Menekulj.Model.Enemy" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="17.562" Y="5.997" />
+        <Point X="17.562" Y="7.604" />
+        <Point X="11.5" Y="7.604" />
+        <Point X="11.5" Y="6.925" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -83,8 +83,8 @@
       <Property Name="Player" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
-      <Property Name="Cells" />
       <Property Name="Enemies" />
+      <Property Name="Cells" />
     </ShowAsCollectionAssociation>
   </Struct>
   <Enum Name="Menekulj.Model.Cell">
