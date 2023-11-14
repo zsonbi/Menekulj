@@ -9,9 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "FormsTest\Tests.cs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj", "{5243CE54-93D6-4B7C-8CC4-675E13BD2F55}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFView", "WPFView\WPFView.csproj", "{428AD3F2-CF07-4591-9D6B-00F45B1D5656}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModel", "ViewModel\ViewModel.csproj", "{A68DAEF9-AFBC-4E7F-B09E-13E56D0412D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFView", "WPFView\WPFView.csproj", "{428AD3F2-CF07-4591-9D6B-00F45B1D5656}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +33,6 @@ Global
 		{428AD3F2-CF07-4591-9D6B-00F45B1D5656}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{428AD3F2-CF07-4591-9D6B-00F45B1D5656}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{428AD3F2-CF07-4591-9D6B-00F45B1D5656}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A68DAEF9-AFBC-4E7F-B09E-13E56D0412D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A68DAEF9-AFBC-4E7F-B09E-13E56D0412D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A68DAEF9-AFBC-4E7F-B09E-13E56D0412D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A68DAEF9-AFBC-4E7F-B09E-13E56D0412D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

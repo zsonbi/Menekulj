@@ -24,7 +24,7 @@ namespace Menekulj
 
 
 
-        private async Task CreateNewGame(byte boardSize = 0, uint mineCount = 0, GameModel? gameModel = null)
+        private void CreateNewGame(byte boardSize = 0, uint mineCount = 0, GameModel? gameModel = null)
         {
             if (gameModel != null)
             {
@@ -39,7 +39,7 @@ namespace Menekulj
 
             this.gameModel!.UpdateView += UpdateView;
             this.gameModel!.GameOver += GameOver;
-            Task.Run(() => this.gameModel!.StartGame());
+            _ = Task.Run(() => this.gameModel!.StartGame());
 
         }
 
@@ -118,7 +118,7 @@ namespace Menekulj
 
 
 
-        private async void GameOver(object? sender, EventArgs args)
+        private void GameOver(object? sender, EventArgs args)
         {
 
             string message;
@@ -134,7 +134,7 @@ namespace Menekulj
             if (MessageBox.Show(message, "Result", MessageBoxButtons.RetryCancel) == DialogResult.Retry)
             {
 
-                await this.Invoke(() => CreateNewGame(gameModel.MatrixSize, gameModel.MineCount));
+                this.Invoke(() => CreateNewGame(gameModel.MatrixSize, gameModel.MineCount));
             }
             else
             {
@@ -199,7 +199,7 @@ namespace Menekulj
 
 
 
-                await CreateNewGame(gameModel: loadedModel);
+                CreateNewGame(gameModel: loadedModel);
                 return true;
             }
             else
@@ -214,7 +214,7 @@ namespace Menekulj
         //Events
         //**********************************************************************************************************
 
-        private async void NewGameBtn_Click(object sender, EventArgs e)
+        private void NewGameBtn_Click(object sender, EventArgs e)
         {
             NewGameBtn.Hide();
             SmallRadio.Hide();
@@ -226,15 +226,15 @@ namespace Menekulj
 
             if (SmallRadio.Checked)
             {
-                await CreateNewGame(11, 7);
+                CreateNewGame(11, 7);
             }
             else if (MediumRadio.Checked)
             {
-                await CreateNewGame(15, 14);
+                CreateNewGame(15, 14);
             }
             else
             {
-                await CreateNewGame(21, 21);
+                CreateNewGame(21, 21);
             }
         }
 

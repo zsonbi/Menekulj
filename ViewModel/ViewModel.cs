@@ -1,41 +1,55 @@
-﻿using Menekulj.Model;
-using Menekulj.Persistance;
-using Microsoft.Win32;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Media;
+using Menekulj.Model;
+using Microsoft.Win32;
 
-namespace WPFView
+namespace Menekulj.ViewModel
 {
-    /// <summary>
-    /// Interaction logic for View.xaml
-    /// </summary>
-    public partial class View : Window
+    public class ViewModel
     {
-        GameModel? gameModel;
-        Rectangle[,]? viewCells;
+        private GameModel? gameModel;
+
+        public DelegateCommand ExitGameCommand {  get; private set; }
+        public DelegateCommand LoadGameCommand {  get; private set; }
+        public DelegateCommand SaveGameCommand {  get; private set; }
+        public DelegateCommand NewGameCommand{get; private set; }
+
+   
+
+       public Player player;
+
+        public ObservableCollection<Enemy> enemies;
+
+        public ViewModel()
+        {
+            this.gameModel = new GameModel(10, 10);
+            gabcsika = new ImageBrush(new BitmapImage(new Uri("./Images/enemy.png", UriKind.Relative)));
+            playerImg = new ImageBrush(new BitmapImage(new Uri("./Images/player.png", UriKind.Relative)));
+            mine = new ImageBrush(new BitmapImage(new Uri("./Images/mine.png", UriKind.Relative)));
+        }
+
+
+
+
+
+
+     //   Rectangle[,]? viewCells;
 
         private const int PadAmount = 20;
         private const int TopBarAmount = 70;
         ImageBrush gabcsika;
-        ImageBrush player;
+        ImageBrush playerImg;
         ImageBrush mine;
-
-        public View()
-        {
-            InitializeComponent();
-            gabcsika = new ImageBrush(new BitmapImage(new Uri("./Images/enemy.png", UriKind.Relative)));
-            player = new ImageBrush(new BitmapImage(new Uri("./Images/player.png", UriKind.Relative)));
-            mine = new ImageBrush(new BitmapImage(new Uri("./Images/mine.png", UriKind.Relative)));
-
-
-        }
-
 
 
         private void CreateNewGame(byte boardSize = 0, uint mineCount = 0, GameModel? gameModel = null)
@@ -67,16 +81,16 @@ namespace WPFView
             }
 
 
-            viewCells = new Rectangle[gameModel.MatrixSize, gameModel.MatrixSize];
-            Board.Children.Clear();
-            Board.ColumnDefinitions.Clear();
-            Board.RowDefinitions.Clear();
+            //viewCells = new Rectangle[gameModel.MatrixSize, gameModel.MatrixSize];
+            //Board.Children.Clear();
+            //Board.ColumnDefinitions.Clear();
+            //Board.RowDefinitions.Clear();
 
-            for (int i = 0; i < gameModel.MatrixSize; i++)
-            {
-                Board.ColumnDefinitions.Add(new ColumnDefinition());
-                Board.RowDefinitions.Add(new RowDefinition());
-            }
+            //for (int i = 0; i < gameModel.MatrixSize; i++)
+            //{
+            //    Board.ColumnDefinitions.Add(new ColumnDefinition());
+            //    Board.RowDefinitions.Add(new RowDefinition());
+            //}
 
 
 
@@ -85,39 +99,39 @@ namespace WPFView
             {
                 for (int j = 0; j < gameModel.MatrixSize; j++)
                 {
-                    Rectangle cell = new Rectangle();
-                    cell.Name = "cell" + i + "_" + j;
-                    cell.Stroke = Brushes.Black;
-                    switch (gameModel.GetCell(i, j))
-                    {
-                        case Cell.Empty:
-                            cell.Fill = Brushes.White;
-                            break;
+                    ////Rectangle cell = new Rectangle();
+                    //cell.Name = "cell" + i + "_" + j;
+                    //cell.Stroke = Brushes.Black;
+                    //switch (gameModel.GetCell(i, j))
+                    //{
+                    //    case Cell.Empty:
+                    //        cell.Fill = Brushes.White;
+                    //        break;
 
-                        case Cell.Player:
-                            cell.Fill = player;
-                            break;
+                    //    case Cell.Player:
+                    //        cell.Fill = playerImg;
+                    //        break;
 
-                        case Cell.Enemy:
-                            cell.Fill = gabcsika;
-                            break;
+                    //    case Cell.Enemy:
+                    //        cell.Fill = gabcsika;
+                    //        break;
 
-                        case Cell.Mine:
-                            cell.Fill = mine;
-                            break;
+                    //    case Cell.Mine:
+                    //        cell.Fill = mine;
+                    //        break;
 
-                        default:
-                            break;
-                    }
-                    cell.Stretch = Stretch.Fill;
+                    //    default:
+                    //        break;
+                    //}
+                    //cell.Stretch = Stretch.Fill;
 
-                    Grid.SetColumn(cell, j);
-                    Grid.SetRow(cell, i);
-                    Board.Children.Add(cell);
-                    viewCells[i, j] = cell;
+                    //Grid.SetColumn(cell, j);
+                    //Grid.SetRow(cell, i);
+                    //Board.Children.Add(cell);
+                    //viewCells[i, j] = cell;
                 }
             }
-            Board.Visibility = Visibility.Visible;
+            //Board.Visibility = Visibility.Visible;
 
         }
 
@@ -171,7 +185,7 @@ namespace WPFView
                 }
 
                 viewCells[gameModel.Player.PrevPosition.Row, gameModel.Player.PrevPosition.Col].Fill = Brushes.White;
-                viewCells[gameModel.Player.Position.Row, gameModel.Player.Position.Col].Fill = player;
+                viewCells[gameModel.Player.Position.Row, gameModel.Player.Position.Col].Fill = playerImg;
             });
         }
 
@@ -354,6 +368,9 @@ namespace WPFView
         {
             this.Close();
         }
-    }
 
+
+
+
+    }
 }

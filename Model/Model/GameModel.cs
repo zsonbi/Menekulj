@@ -165,7 +165,7 @@
         public async Task Tick()
         {
             HandleMovement();
-            UpdateCells();
+            await Task.Run(() => UpdateCells());
             UpdateView?.Invoke(this, EventArgs.Empty);
 
 
