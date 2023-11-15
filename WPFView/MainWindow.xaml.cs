@@ -9,7 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-
+using Menekulj.ViewModel;
 namespace WPFView
 {
     /// <summary>
@@ -17,11 +17,11 @@ namespace WPFView
     /// </summary>
     public partial class View : Window
     {
-        GameModel? gameModel;
+        private Menekulj.ViewModel.ViewModel viewModel;
+
+        // GameModel? gameModel;
         Rectangle[,]? viewCells;
 
-        private const int PadAmount = 20;
-        private const int TopBarAmount = 70;
         ImageBrush gabcsika;
         ImageBrush player;
         ImageBrush mine;
@@ -32,63 +32,32 @@ namespace WPFView
             gabcsika = new ImageBrush(new BitmapImage(new Uri("./Images/enemy.png", UriKind.Relative)));
             player = new ImageBrush(new BitmapImage(new Uri("./Images/player.png", UriKind.Relative)));
             mine = new ImageBrush(new BitmapImage(new Uri("./Images/mine.png", UriKind.Relative)));
-
+            viewModel = new Menekulj.ViewModel.ViewModel(new EventHandler(UpdateView),new EventHandler(GameOver));
 
         }
-
-
-
-        private void CreateNewGame(byte boardSize = 0, uint mineCount = 0, GameModel? gameModel = null)
-        {
-            if (gameModel != null)
-            {
-                this.gameModel = gameModel;
-
-            }
-            else
-            {
-                this.gameModel = new GameModel(boardSize, mineCount);
-            }
-            CreateView();
-
-            this.gameModel!.UpdateView += UpdateView;
-            this.gameModel!.GameOver += GameOver;
-            //await this.gameModel!.StartGame();
-            _ = Task.Run(() => this.gameModel!.StartGame());
-        }
-
 
 
         private void CreateView()
         {
-            if (gameModel == null)
-            {
-                throw new NoGameCreatedException();
-            }
-
-
-            viewCells = new Rectangle[gameModel.MatrixSize, gameModel.MatrixSize];
+            viewCells = new Rectangle[viewModel.MatrixSize, viewModel.MatrixSize];
             Board.Children.Clear();
             Board.ColumnDefinitions.Clear();
             Board.RowDefinitions.Clear();
-
-            for (int i = 0; i < gameModel.MatrixSize; i++)
+            for (int i = 0; i < viewModel.MatrixSize; i++)
             {
                 Board.ColumnDefinitions.Add(new ColumnDefinition());
                 Board.RowDefinitions.Add(new RowDefinition());
             }
 
-
-
             //Creates the cells for the game where the game object will be rendered
-            for (int i = 0; i < gameModel.MatrixSize; i++)
+            for (int i = 0; i < viewModel.MatrixSize; i++)
             {
-                for (int j = 0; j < gameModel.MatrixSize; j++)
+                for (int j = 0; j < viewModel.MatrixSize; j++)
                 {
                     Rectangle cell = new Rectangle();
                     cell.Name = "cell" + i + "_" + j;
                     cell.Stroke = Brushes.Black;
-                    switch (gameModel.GetCell(i, j))
+                    switch (viewModel.GetCell(i, j))
                     {
                         case Cell.Empty:
                             cell.Fill = Brushes.White;
@@ -110,7 +79,7 @@ namespace WPFView
                             break;
                     }
                     cell.Stretch = Stretch.Fill;
-
+                    Grid.SetZIndex(cell,-1);
                     Grid.SetColumn(cell, j);
                     Grid.SetRow(cell, i);
                     Board.Children.Add(cell);
@@ -127,7 +96,7 @@ namespace WPFView
         {
 
             string message;
-            if (gameModel!.PlayerWon)
+            if ( viewModel!.PlayerWon)
             {
                 message = "You won! Want to try again?";
             }
@@ -138,8 +107,10 @@ namespace WPFView
             }
             if (MessageBox.Show(message, "Result", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
+                viewModel.NewGameCommand.Execute(sender);
+                Application.Current.Dispatcher.Invoke(()=> CreateView());
+                viewModel.StartGameCommand?.Execute(null);
 
-                Application.Current.Dispatcher.Invoke(() => CreateNewGame(gameModel.MatrixSize, gameModel.MineCount));
             }
             else
             {
@@ -154,13 +125,13 @@ namespace WPFView
                 throw new NullReferenceException();
             }
 
-            if (gameModel == null)
+            if (!viewModel.GameIsCreated)
             {
                 throw new NoGameCreatedException();
             }
             Application.Current.Dispatcher.Invoke(() =>
             {
-                foreach (var enemy in gameModel.Enemies)
+                foreach (var enemy in viewModel.Enemies)
                 {
 
                     viewCells[enemy.PrevPosition.Row, enemy.PrevPosition.Col].Fill = Brushes.White;
@@ -170,8 +141,8 @@ namespace WPFView
                     }
                 }
 
-                viewCells[gameModel.Player.PrevPosition.Row, gameModel.Player.PrevPosition.Col].Fill = Brushes.White;
-                viewCells[gameModel.Player.Position.Row, gameModel.Player.Position.Col].Fill = player;
+                viewCells[viewModel.Player.PrevPosition.Row, viewModel.Player.PrevPosition.Col].Fill = Brushes.White;
+                viewCells[viewModel.Player.Position.Row, viewModel.Player.Position.Col].Fill = player;
             });
         }
 
@@ -195,9 +166,10 @@ namespace WPFView
                     return false;
                 }
 
+                viewModel.LoadGameCommand.Execute(loadedModel);
+                Application.Current.Dispatcher.Invoke(()=> CreateView());
+                viewModel.StartGameCommand?.Execute(null);
 
-
-                CreateNewGame(gameModel: loadedModel);
                 return true;
             }
             else
@@ -221,22 +193,25 @@ namespace WPFView
             MenuStackPanel.Background = Brushes.Gray;
             if (SmallBoardRadio.IsChecked!.Value)
             {
-                CreateNewGame(11, 7);
+                viewModel.NewGameCommand.Execute(new uint[] { 11, 7 });
             }
             else if (MediumBoardRadio.IsChecked!.Value)
             {
-                CreateNewGame(15, 14);
+                viewModel.NewGameCommand.Execute(new uint[] { 15, 14 });
             }
             else
             {
-                CreateNewGame(21, 21);
+                viewModel.NewGameCommand.Execute(new uint[] { 21, 21 });
             }
+            CreateView();
+            viewModel.StartGameCommand?.Execute(null);
+
         }
 
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (gameModel == null)
+            if (!viewModel.GameIsCreated)
             {
                 return;
             }
@@ -244,51 +219,36 @@ namespace WPFView
             //capture up arrow key
             if (e.Key == Key.Up || e.Key == Key.W)
             {
-                gameModel.ChangePlayerDirection(Direction.Up);
+                viewModel.ChangeDirectionCommand?.Execute(Direction.Up);
                 return;
             }
             //capture down arrow key
             if (e.Key == Key.Down || e.Key == Key.S)
             {
-                gameModel.ChangePlayerDirection(Direction.Down);
-
+                viewModel.ChangeDirectionCommand?.Execute(Direction.Down);
                 return;
             }
             //capture left arrow key
             if (e.Key == Key.Left || e.Key == Key.A)
             {
-                gameModel.ChangePlayerDirection(Direction.Left);
-
+                viewModel.ChangeDirectionCommand?.Execute(Direction.Left);
                 return;
             }
             //capture right arrow key
             if (e.Key == Key.Right || e.Key == Key.D)
             {
-                gameModel.ChangePlayerDirection(Direction.Right);
-
+                viewModel.ChangeDirectionCommand?.Execute(Direction.Right);
                 return;
             }
         }
 
 
-        private void ResumeBtn_Click(object sender, RoutedEventArgs e)
+        
+
+
+        private void SaveGameBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (gameModel is null)
-            {
-                throw new NoGameCreatedException();
-            }
-
-            gameModel!.Resume();
-            MainMenu.Visibility = Visibility.Hidden;
-
-
-        }
-
-
-
-        private async void SaveGameBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (gameModel == null)
+            if (!viewModel.GameIsCreated)
             {
                 MessageBox.Show("No game is running");
                 return;
@@ -303,7 +263,7 @@ namespace WPFView
             {
                 try
                 {
-                    await gameModel.SaveGame($"{saveFileDialog.FileName}");
+                    viewModel.SaveGameCommand?.Execute($"{saveFileDialog.FileName}");
                 }
                 catch (Exception)
                 {
@@ -331,13 +291,25 @@ namespace WPFView
 
         }
 
-        private void pauseBtn_Click(object sender, RoutedEventArgs e)
+        private void ResumeBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (gameModel == null)
+            if (!viewModel.GameIsCreated)
             {
                 throw new NoGameCreatedException();
             }
-            if (!gameModel.Running)
+
+            viewModel.ResumeCommand?.Execute(sender);
+            MainMenu.Visibility = Visibility.Hidden;
+        }
+
+
+        private void pauseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (!viewModel.GameIsCreated)
+            {
+                throw new NoGameCreatedException();
+            }
+            if (!viewModel.Running)
             {
                 ResumeBtn_Click(sender, e);
                 return;
@@ -345,7 +317,8 @@ namespace WPFView
 
             ResumeBtn.Visibility = Visibility.Visible;
 
-            gameModel.Pause();
+            viewModel.PauseCommand?.Execute(sender);
+
             MainMenu.Visibility = Visibility.Visible;
         }
 

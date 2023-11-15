@@ -10,31 +10,26 @@ namespace Menekulj.ViewModel
     public class DelegateCommand : ICommand
     {
 
-        private readonly Action<object> _execute;
-        private readonly Func<object, bool> canExecute;
-        public event EventHandler CanExecuteChanged;
+        private readonly Action<object?> _execute;
+        private readonly Func<object?, bool>? canExecute;
+        public event EventHandler? CanExecuteChanged;
 
-        public DelegateCommand(Action<object> executeAction)
+        public DelegateCommand(Action<object?> executeAction)
         {
             _execute = executeAction;
         }
 
-        public DelegateCommand(Func<object,bool> canExecute,Action<object> executeAction)
+        public DelegateCommand(Func<object?, bool> canExecute, Action<object?> executeAction)
         {
             this.canExecute = canExecute;
             this._execute = executeAction;
 
         }
 
-        public void Execute(object parameter) => _execute(parameter);
-
-        public bool CanExecute(object parameter)
+        public void Execute(object? parameter)
         {
-
-            return canExecute(parameter);
-
+            _execute(parameter);
         }
-
 
 
         public void RaiseCanExecuteChanged()
@@ -42,5 +37,17 @@ namespace Menekulj.ViewModel
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        public bool CanExecute(object? parameter)
+        {
+            if (this.canExecute == null)
+            {
+                return true;
+            }
+            else
+            {
+                bool result = this.canExecute.Invoke(parameter);
+                return result;
+            }
+        }
     }
 }

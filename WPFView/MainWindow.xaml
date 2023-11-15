@@ -29,12 +29,14 @@
 
 
 
-        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2,2,2,3" Margin="35,10">
-        <Grid x:Name="Board">
-            
-        </Grid>
-        </Border>
+        <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2,2,2,3" Margin="35,10" >
+            <Grid x:Name="Board" >
 
+
+
+            </Grid>
+
+       </Border>
         <Grid Name="MainMenu" Grid.RowSpan="2">
             <Grid.Background>
                 <ImageBrush ImageSource="./Images/mainmenubackground.jpg"></ImageBrush>

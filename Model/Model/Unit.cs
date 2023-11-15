@@ -1,8 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Menekulj.Model
 {
-    public abstract class Unit
+    public abstract class Unit : INotifyPropertyChanged
     {
         /// <summary>
         /// The 2d position of the unit
@@ -18,6 +19,9 @@ namespace Menekulj.Model
         public bool Dead { get; protected set; } = false;
         //Reference to the game which houses the unit
         protected GameModel? game;
+
+        //Event for the NotifyChanged Event
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Creates a new Unit
@@ -122,6 +126,7 @@ namespace Menekulj.Model
                 default:
                     break;
             }
+            PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(this.GetType().Name));
         }
 
         /// <summary>

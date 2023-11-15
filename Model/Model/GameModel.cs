@@ -1,11 +1,14 @@
-﻿namespace Menekulj.Model
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+
+namespace Menekulj.Model
 {
-    public class GameModel
+    public class GameModel : INotifyPropertyChanged
     {
 
         public event EventHandler? UpdateView;
         public event EventHandler? GameOver;
-
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public const int GameSpeed = 400; //Millis for a move to happen
         private static readonly Random rnd = new Random(); //Random for the mine spawning
@@ -23,7 +26,7 @@
         /// <summary>
         /// Enemies (the ones which are dead does not move or need to be shown)
         /// </summary>
-        public List<Enemy> Enemies { get; private set; } = new List<Enemy>();
+        public ObservableCollection<Enemy> Enemies { get; private set; } = new ObservableCollection<Enemy>();
         /// <summary>
         /// Get if the player won (Should only be checked if we're certain that the game is over)
         /// </summary>
@@ -167,7 +170,7 @@
             HandleMovement();
             await Task.Run(() => UpdateCells());
             UpdateView?.Invoke(this, EventArgs.Empty);
-
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("cells"));
 
         }
 
