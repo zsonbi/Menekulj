@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WPFView"
+     
         mc:Ignorable="d"
         Title="Menekulj" Height="800" Width="800" MinHeight="600px" MinWidth="400px" KeyDown="Window_KeyDown">
     <Window.Resources>
@@ -15,10 +15,10 @@
             <Setter Property="FontSize" Value="30"></Setter>
             <Setter Property="Margin" Value="10,2"></Setter>
             <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
-            
+
         </Style>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80px"></RowDefinition>
@@ -30,19 +30,84 @@
 
 
         <Border Grid.Row="1" BorderBrush="Black" BorderThickness="2,2,2,3" Margin="35,10" >
-            <Grid x:Name="Board" >
+            <!--<Grid x:Name="Board" >
+            </Grid>-->
+
+            <ItemsControl Name="ItemControl" ItemsSource="{Binding ViewModelCells}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="11" Columns="11"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button  
+                     Focusable="False" RenderTransformOrigin="0.5, 0.5" 
+                     FontSize="24" FontWeight="Bold">
+                            <Button.Style>
+                                <Style TargetType="Button">
+
+                                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Name="btnborder" 
+                                                BorderThickness="1"
+                                                BorderBrush="DarkGray" 
+                                                Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <!--<Setter TargetName="btnborder" Property="BorderBrush" Value="Black" />-->
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding CellType}" Value="0">
+                                            <Setter Property="Background" Value="LightGray">
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding CellType}" Value="1">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <ImageBrush ImageSource="./Images/player.png"></ImageBrush>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding CellType}" Value="2">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <ImageBrush ImageSource="./Images/enemy.png"></ImageBrush>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding CellType}" Value="3">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <ImageBrush ImageSource="./Images/mine.png"></ImageBrush>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
 
-
-            </Grid>
-
-       </Border>
+        </Border>
         <Grid Name="MainMenu" Grid.RowSpan="2">
             <Grid.Background>
                 <ImageBrush ImageSource="./Images/mainmenubackground.jpg"></ImageBrush>
             </Grid.Background>
-            
-            
+
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition MinWidth="380px"/>
@@ -53,23 +118,23 @@
             <StackPanel Name="MenuStackPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">
 
                 <Button Content="Resume" Name="ResumeBtn" Click="ResumeBtn_Click" Visibility="Collapsed"/>
-                
+
                 <Button Content="New Game" Name="NewGameBtn" Click="NewGameBtn_Click"/>
 
                 <Button Content="Save Game" Name="SaveGameBtn" Click="SaveGameBtn_Click" Visibility="Collapsed"/>
-                
-                <Button Content="Load Game" Name="LoadGameBtn" Click="LoadGameBtn_Click"/>
-          
-          
-    
 
-                    <RadioButton Content="Small map" Name="SmallBoardRadio" IsChecked="True" GroupName="mapSize"></RadioButton>
-                    <RadioButton Content="Medium map" Name="MediumBoardRadio" GroupName="mapSize"></RadioButton>
-                    <RadioButton Content="Big map" Name="BigBoardRadio" GroupName="mapSize"></RadioButton>
+                <Button Content="Load Game" Name="LoadGameBtn" Click="LoadGameBtn_Click"/>
+
+
+
+
+                <RadioButton Content="Small map" Name="SmallBoardRadio" IsChecked="True" GroupName="mapSize"></RadioButton>
+                <RadioButton Content="Medium map" Name="MediumBoardRadio" GroupName="mapSize"></RadioButton>
+                <RadioButton Content="Big map" Name="BigBoardRadio" GroupName="mapSize"></RadioButton>
 
                 <Button Content="Exit" Name="ExitBtn" Background="Red" Click="ExitBtn_Click"/>
 
-            </StackPanel>    
+            </StackPanel>
         </Grid>
 
 

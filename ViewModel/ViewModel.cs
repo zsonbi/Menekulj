@@ -12,13 +12,14 @@ using System.Windows.Input;
 
 using Microsoft.Win32;
 using System.ComponentModel;
+using ViewModel;
 
 namespace Menekulj.ViewModel
 {
-    public class ViewModel
+    public class ViewModel : ViewModelBase
     {
         private GameModel gameModel;
-        private EventHandler updateView;
+
         private EventHandler gameOver;
         //  public DelegateCommand ExitGameCommand { get; private set; }
         public DelegateCommand LoadGameCommand { get; private set; }
@@ -35,19 +36,21 @@ namespace Menekulj.ViewModel
         public Player Player { get => gameModel.Player; }
         public ObservableCollection<Enemy> Enemies { get => gameModel.Enemies; }
 
+        public ObservableCollection<ViewModelCell> ViewModelCells{ get; set;} = new ObservableCollection<ViewModelCell>();
 
         public byte MatrixSize { get => gameModel.MatrixSize; }
         public bool GameIsCreated { get => gameModel is not null; }
         public bool Running { get => gameModel.Running; }
         public bool PlayerWon { get => gameModel.PlayerWon; }
 
-        public ViewModel(EventHandler updateView, EventHandler gameOver)
+        public ViewModel( EventHandler gameOver)
         {
             this.gameModel = new GameModel(10, 10);
             NewGameCommand = new DelegateCommand(new Action<object?>(NewGame));
             LoadGameCommand = new DelegateCommand(new Action<object?>(LoadGame));
-            this.updateView = updateView;
+
             this.gameOver = gameOver;
+            this.ViewModelCells.Add(new ViewModelCell(0,0,-1));
         }
 
 
@@ -160,8 +163,21 @@ namespace Menekulj.ViewModel
             }
             //  CreateView();
             BindCommandsToGameModel();
-            this.gameModel!.UpdateView += updateView;
+            this.gameModel!.UpdateView += UpdateView;
             this.gameModel!.GameOver += gameOver;
+
+            this.ViewModelCells.Clear();
+         
+            for (int i = 0; i < this.gameModel.MatrixSize; i++)
+            {
+                for (int j = 0; j < this.gameModel.MatrixSize; j++)
+                {
+                    ViewModelCell vMCell = new ViewModelCell(i, j, i * this.gameModel.MatrixSize + j);
+                    vMCell.CellType = (int)this.gameModel.GetCell(i, j);
+                    this.ViewModelCells.Add(vMCell);
+                }
+            }
+
             //await this.gameModel!.StartGame();
         }
 
@@ -292,33 +308,33 @@ namespace Menekulj.ViewModel
         //    }
         //}
 
-        //private void UpdateView(object? sender, EventArgs args)
-        //{
-        //    //if (viewCells == null)
-        //    //{
-        //    //    throw new NullReferenceException();
-        //    //}
+        private void UpdateView(object? sender, EventArgs args)
+        {
+            if (this.ViewModelCells == null)
+            {
+                throw new NullReferenceException("ViewModelCells");
+            }
 
-        //    //if (gameModel == null)
-        //    //{
-        //    //    throw new NoGameCreatedException();
-        //    //}
-        //    //Application.Current.Dispatcher.Invoke(() =>
-        //    //{
-        //    //    foreach (var enemy in gameModel.Enemies)
-        //    //    {
+            if (gameModel == null)
+            {
+                throw new NoGameCreatedException();
+            }
 
-        //    //        viewCells[enemy.PrevPosition.Row, enemy.PrevPosition.Col].Fill = Brushes.White;
-        //    //        if (!enemy.Dead)
-        //    //        {
-        //    //            viewCells[enemy.Position.Row, enemy.Position.Col].Fill = gabcsika;
-        //    //        }
-        //    //    }
+            foreach (var enemy in gameModel.Enemies)
+            {
 
-        //    //    viewCells[gameModel.Player.PrevPosition.Row, gameModel.Player.PrevPosition.Col].Fill = Brushes.White;
-        //    //    viewCells[gameModel.Player.Position.Row, gameModel.Player.Position.Col].Fill = playerImg;
-        //    //});
-        //}
+                this.ViewModelCells[enemy.PrevPosition.Row * gameModel.MatrixSize + enemy.PrevPosition.Col].CellType =(int) Cell.Empty;
+                if (!enemy.Dead)
+                {
+                    this.ViewModelCells[enemy.Position.Row * gameModel.MatrixSize + enemy.Position.Col].CellType = (int)Cell.Enemy;
+                }
+            }
+
+            this.ViewModelCells[gameModel.Player.PrevPosition.Row * gameModel.MatrixSize + gameModel.Player.PrevPosition.Col].CellType = (int)Cell.Empty;
+            this.ViewModelCells[gameModel.Player.Position.Row * gameModel.MatrixSize + gameModel.Player.Position.Col].CellType = (int)Cell.Player;
+
+            OnPropertyChanged(nameof(ViewModelCells));
+        }
 
 
         ////*************************************************************************************************
@@ -382,126 +398,17 @@ namespace Menekulj.ViewModel
         //}
 
 
-        //private void Window_KeyDown(object sender, KeyEventArgs e)
-        //{
-        //    if (gameModel == null)
-        //    {
-        //        return;
-        //    }
-
-        //    //capture up arrow key
-        //    if (e.Key == Key.Up || e.Key == Key.W)
-        //    {
-        //        gameModel.ChangePlayerDirection(Direction.Up);
-        //        return;
-        //    }
-        //    //capture down arrow key
-        //    if (e.Key == Key.Down || e.Key == Key.S)
-        //    {
-        //        gameModel.ChangePlayerDirection(Direction.Down);
-
-        //        return;
-        //    }
-        //    //capture left arrow key
-        //    if (e.Key == Key.Left || e.Key == Key.A)
-        //    {
-        //        gameModel.ChangePlayerDirection(Direction.Left);
-
-        //        return;
-        //    }
-        //    //capture right arrow key
-        //    if (e.Key == Key.Right || e.Key == Key.D)
-        //    {
-        //        gameModel.ChangePlayerDirection(Direction.Right);
-
-        //        return;
-        //    }
-        //}
-
-
-        //private void ResumeBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (gameModel is null)
-        //    {
-        //        throw new NoGameCreatedException();
-        //    }
-
-        //    gameModel!.Resume();
-        //    //MainMenu.Visibility = Visibility.Hidden;
-
-
-        //}
 
 
 
-        //private async void SaveGameBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (gameModel == null)
-        //    {
-        //        MessageBox.Show("No game is running");
-        //        return;
-        //    }
 
 
 
-        //    SaveFileDialog saveFileDialog = new SaveFileDialog();
-        //    saveFileDialog.DefaultExt = "json";
-        //    //saveFileDialog.Filter ="(*.json)";
-        //    if (saveFileDialog.ShowDialog()!.Value)
-        //    {
-        //        try
-        //        {
-        //            await gameModel.SaveGame($"{saveFileDialog.FileName}");
-        //        }
-        //        catch (Exception)
-        //        {
-        //            MessageBox.Show("Error while saving the game");
-        //        }
 
 
-        //    }
-        //}
-
-        //private async void LoadGameBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (await LoadGame())
-        //    {
-        //        //PauseBtn.Visibility = Visibility.Visible;
-        //        //SaveGameBtn.Visibility = Visibility.Visible;
-        //        //MainMenu.Visibility = Visibility.Hidden;
-        //        //MainMenu.Background = null;
-        //        //MenuStackPanel.Background = Brushes.Gray;
-        //    }
-        //    else
-        //    {
-
-        //    }
-
-        //}
-
-        //private void pauseBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (gameModel == null)
-        //    {
-        //        throw new NoGameCreatedException();
-        //    }
-        //    if (!gameModel.Running)
-        //    {
-        //        ResumeBtn_Click(sender, e);
-        //        return;
-        //    }
-
-        //    //ResumeBtn.Visibility = Visibility.Visible;
-
-        //    //gameModel.Pause();
-        //    //MainMenu.Visibility = Visibility.Visible;
-        //}
 
 
-        //private void ExitBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    //  this.Close();
-        //}
+     
 
 
 

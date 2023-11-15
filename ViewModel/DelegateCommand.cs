@@ -34,6 +34,7 @@ namespace Menekulj.ViewModel
 
         public void RaiseCanExecuteChanged()
         {
+
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -45,8 +46,7 @@ namespace Menekulj.ViewModel
             }
             else
             {
-                bool result = this.canExecute.Invoke(parameter);
-                return result;
+               return this.canExecute.Invoke(parameter);
             }
         }
     }
