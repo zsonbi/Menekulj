@@ -15,7 +15,7 @@ namespace Menekulj.ViewModel
         
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] String? propertyName = null)
+        protected virtual void OnPropertyChanged(string? propertyName = null)
         {
             if (PropertyChanged != null)
             {

@@ -10,6 +10,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Menekulj.ViewModel;
+using System.Windows.Controls.Primitives;
+
 namespace WPFView
 {
     /// <summary>
@@ -19,78 +21,14 @@ namespace WPFView
     {
         private Menekulj.ViewModel.ViewModel viewModel;
 
-        // GameModel? gameModel;
-        Rectangle[,]? viewCells;
-
-        ImageBrush gabcsika;
-        ImageBrush player;
-        ImageBrush mine;
 
         public View()
         {
             InitializeComponent();
-            gabcsika = new ImageBrush(new BitmapImage(new Uri("./Images/enemy.png", UriKind.Relative)));
-            player = new ImageBrush(new BitmapImage(new Uri("./Images/player.png", UriKind.Relative)));
-            mine = new ImageBrush(new BitmapImage(new Uri("./Images/mine.png", UriKind.Relative)));
+
             viewModel = new Menekulj.ViewModel.ViewModel(new EventHandler(GameOver));
             this.DataContext = viewModel;
         }
-
-
-        private void CreateView()
-        {
-            //viewCells = new Rectangle[viewModel.MatrixSize, viewModel.MatrixSize];
-            //Board.Children.Clear();
-            //Board.ColumnDefinitions.Clear();
-            //Board.RowDefinitions.Clear();
-            //for (int i = 0; i < viewModel.MatrixSize; i++)
-            //{
-            //    Board.ColumnDefinitions.Add(new ColumnDefinition());
-            //    Board.RowDefinitions.Add(new RowDefinition());
-            //}
-
-            ////Creates the cells for the game where the game object will be rendered
-            //for (int i = 0; i < viewModel.MatrixSize; i++)
-            //{
-            //    for (int j = 0; j < viewModel.MatrixSize; j++)
-            //    {
-            //        Rectangle cell = new Rectangle();
-            //        cell.Name = "cell" + i + "_" + j;
-            //        cell.Stroke = Brushes.Black;
-            //        switch (viewModel.GetCell(i, j))
-            //        {
-            //            case Cell.Empty:
-            //                cell.Fill = Brushes.White;
-            //                break;
-
-            //            case Cell.Player:
-            //                cell.Fill = player;
-            //                break;
-
-            //            case Cell.Enemy:
-            //                cell.Fill = gabcsika;
-            //                break;
-
-            //            case Cell.Mine:
-            //                cell.Fill = mine;
-            //                break;
-
-            //            default:
-            //                break;
-            //        }
-            //        cell.Stretch = Stretch.Fill;
-            //        Grid.SetZIndex(cell,-1);
-            //        Grid.SetColumn(cell, j);
-            //        Grid.SetRow(cell, i);
-            //        Board.Children.Add(cell);
-            //        viewCells[i, j] = cell;
-            //    }
-            //}
-            //Board.Visibility = Visibility.Visible;
-
-        }
-
-
 
         private void GameOver(object? sender, EventArgs args)
         {
@@ -119,33 +57,6 @@ namespace WPFView
             }
         }
 
-        //private void UpdateView(object? sender, EventArgs args)
-        //{
-        //    if (viewCells == null)
-        //    {
-        //        throw new NullReferenceException();
-        //    }
-
-        //    if (!viewModel.GameIsCreated)
-        //    {
-        //        throw new NoGameCreatedException();
-        //    }
-        //    Application.Current.Dispatcher.Invoke(() =>
-        //    {
-        //        foreach (var enemy in viewModel.Enemies)
-        //        {
-
-        //            viewCells[enemy.PrevPosition.Row, enemy.PrevPosition.Col].Fill = Brushes.White;
-        //            if (!enemy.Dead)
-        //            {
-        //                viewCells[enemy.Position.Row, enemy.Position.Col].Fill = gabcsika;
-        //            }
-        //        }
-
-        //        viewCells[viewModel.Player.PrevPosition.Row, viewModel.Player.PrevPosition.Col].Fill = Brushes.White;
-        //        viewCells[viewModel.Player.Position.Row, viewModel.Player.Position.Col].Fill = player;
-        //    });
-        //}
 
         private async Task<bool> LoadGame()
         {
@@ -168,7 +79,6 @@ namespace WPFView
                 }
 
                 viewModel.LoadGameCommand.Execute(loadedModel);
-                Application.Current.Dispatcher.Invoke(()=> CreateView());
                 viewModel.StartGameCommand?.Execute(null);
                 ItemControl.UpdateLayout();
 
@@ -206,9 +116,8 @@ namespace WPFView
                 viewModel.NewGameCommand.Execute(new uint[] { 21, 21 });
             }
             ItemControl.UpdateLayout();
-            CreateView();
             viewModel.StartGameCommand?.Execute(null);
-
+            
         }
 
 
@@ -245,10 +154,6 @@ namespace WPFView
             }
         }
 
-
-        
-
-
         private void SaveGameBtn_Click(object sender, RoutedEventArgs e)
         {
             if (!viewModel.GameIsCreated)
@@ -256,8 +161,6 @@ namespace WPFView
                 MessageBox.Show("No game is running");
                 return;
             }
-
-
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.DefaultExt = "json";
@@ -286,10 +189,6 @@ namespace WPFView
                 MainMenu.Visibility = Visibility.Hidden;
                 MainMenu.Background = null;
                 MenuStackPanel.Background = Brushes.Gray;
-            }
-            else
-            {
-
             }
 
         }

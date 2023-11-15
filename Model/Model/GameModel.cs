@@ -26,7 +26,7 @@ namespace Menekulj.Model
         /// <summary>
         /// Enemies (the ones which are dead does not move or need to be shown)
         /// </summary>
-        public ObservableCollection<Enemy> Enemies { get; private set; } = new ObservableCollection<Enemy>();
+        public List<Enemy> Enemies { get; private set; } = new List<Enemy>();
         /// <summary>
         /// Get if the player won (Should only be checked if we're certain that the game is over)
         /// </summary>

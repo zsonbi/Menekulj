@@ -13,9 +13,9 @@ namespace ViewModel
 
         public DelegateCommand? StepCommand { get; set; }
 
-        private Int32 cellType;
+        private Cell cellType;
 
-        public Int32 CellType { get { return (int)cellType; } set { cellType = value; OnPropertyChanged();} }
+        public Cell CellType { get { return cellType; } set { cellType = (Cell)value; OnPropertyChanged();} }
 
    
 

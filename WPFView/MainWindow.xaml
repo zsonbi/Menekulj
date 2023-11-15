@@ -36,7 +36,7 @@
             <ItemsControl Name="ItemControl" ItemsSource="{Binding ViewModelCells}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Rows="11" Columns="11"/>
+                        <UniformGrid Rows="{Binding ViewModel.MatrixSize}" Columns="{Binding ViewModel.MatrixSize}" x:Name="BoardGrid"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>

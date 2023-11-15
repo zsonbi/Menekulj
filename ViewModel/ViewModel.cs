@@ -33,9 +33,6 @@ namespace Menekulj.ViewModel
 
         public DelegateCommand? StartGameCommand { get; private set; }
 
-        public Player Player { get => gameModel.Player; }
-        public ObservableCollection<Enemy> Enemies { get => gameModel.Enemies; }
-
         public ObservableCollection<ViewModelCell> ViewModelCells{ get; set;} = new ObservableCollection<ViewModelCell>();
 
         public byte MatrixSize { get => gameModel.MatrixSize; }
@@ -163,7 +160,7 @@ namespace Menekulj.ViewModel
             }
             //  CreateView();
             BindCommandsToGameModel();
-            this.gameModel!.UpdateView += UpdateView;
+            this.gameModel!.UpdateView += UpdateUnits;
             this.gameModel!.GameOver += gameOver;
 
             this.ViewModelCells.Clear();
@@ -173,142 +170,17 @@ namespace Menekulj.ViewModel
                 for (int j = 0; j < this.gameModel.MatrixSize; j++)
                 {
                     ViewModelCell vMCell = new ViewModelCell(i, j, i * this.gameModel.MatrixSize + j);
-                    vMCell.CellType = (int)this.gameModel.GetCell(i, j);
+                    vMCell.CellType = this.gameModel.GetCell(i, j);
                     this.ViewModelCells.Add(vMCell);
                 }
             }
 
-            //await this.gameModel!.StartGame();
-        }
-
-
-
-        //private void CreateView()
-        //{
-        //    if (gameModel == null)
-        //    {
-        //        throw new NoGameCreatedException();
-        //    }
-
-
-        //    //viewCells = new Rectangle[gameModel.MatrixSize, gameModel.MatrixSize];
-        //    //Board.Children.Clear();
-        //    //Board.ColumnDefinitions.Clear();
-        //    //Board.RowDefinitions.Clear();
-
-        //    //for (int i = 0; i < gameModel.MatrixSize; i++)
-        //    //{
-        //    //    Board.ColumnDefinitions.Add(new ColumnDefinition());
-        //    //    Board.RowDefinitions.Add(new RowDefinition());
-        //    //}
-
-
-
-        //    //Creates the cells for the game where the game object will be rendered
-        //    for (int i = 0; i < gameModel.MatrixSize; i++)
-        //    {
-        //        for (int j = 0; j < gameModel.MatrixSize; j++)
-        //        {
-        //            ////Rectangle cell = new Rectangle();
-        //            //cell.Name = "cell" + i + "_" + j;
-        //            //cell.Stroke = Brushes.Black;
-        //            //switch (gameModel.GetCell(i, j))
-        //            //{
-        //            //    case Cell.Empty:
-        //            //        cell.Fill = Brushes.White;
-        //            //        break;
-
-        //            //    case Cell.Player:
-        //            //        cell.Fill = playerImg;
-        //            //        break;
-
-        //            //    case Cell.Enemy:
-        //            //        cell.Fill = gabcsika;
-        //            //        break;
-
-        //            //    case Cell.Mine:
-        //            //        cell.Fill = mine;
-        //            //        break;
-
-        //            //    default:
-        //            //        break;
-        //            //}
-        //            //cell.Stretch = Stretch.Fill;
-
-        //            //Grid.SetColumn(cell, j);
-        //            //Grid.SetRow(cell, i);
-        //            //Board.Children.Add(cell);
-        //            //viewCells[i, j] = cell;
-        //        }
-        //    }
-        //    //Board.Visibility = Visibility.Visible;
-
-        //}
-
-
-        //***************************************************************************************************
-        //model Events
-
-        public void UnitPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "player")
-            {
-
-            }
-            else if (e.PropertyName == "enemy")
-            {
-
-            }
-            else
-            {
-                throw new NotImplementedException("This property is not implemented");
-
-            }
-
 
         }
 
-        public void GameModelPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
+   
 
-
-            if (e.PropertyName == "cells")
-            {
-
-            }
-            else
-            {
-                throw new NotImplementedException("This property is not implemented");
-            }
-
-
-        }
-
-        //private void GameOver(object? sender, EventArgs args)
-        //{
-
-        //    string message;
-        //    if (gameModel!.PlayerWon)
-        //    {
-        //        message = "You won! Want to try again?";
-        //    }
-        //    else
-        //    {
-        //        message = "Game over! You died :C Want to try again?";
-
-        //    }
-        //    if (MessageBox.Show(message, "Result", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-        //    {
-
-        //        Application.Current.Dispatcher.Invoke(() => CreateNewGame(gameModel.MatrixSize, gameModel.MineCount));
-        //    }
-        //    else
-        //    {
-        //        //Application.Current.Dispatcher.Invoke(() => Close());
-        //    }
-        //}
-
-        private void UpdateView(object? sender, EventArgs args)
+        private void UpdateUnits(object? sender, EventArgs args)
         {
             if (this.ViewModelCells == null)
             {
@@ -323,87 +195,18 @@ namespace Menekulj.ViewModel
             foreach (var enemy in gameModel.Enemies)
             {
 
-                this.ViewModelCells[enemy.PrevPosition.Row * gameModel.MatrixSize + enemy.PrevPosition.Col].CellType =(int) Cell.Empty;
+                this.ViewModelCells[enemy.PrevPosition.Row * gameModel.MatrixSize + enemy.PrevPosition.Col].CellType =Cell.Empty;
                 if (!enemy.Dead)
                 {
-                    this.ViewModelCells[enemy.Position.Row * gameModel.MatrixSize + enemy.Position.Col].CellType = (int)Cell.Enemy;
+                    this.ViewModelCells[enemy.Position.Row * gameModel.MatrixSize + enemy.Position.Col].CellType = Cell.Enemy;
                 }
             }
 
-            this.ViewModelCells[gameModel.Player.PrevPosition.Row * gameModel.MatrixSize + gameModel.Player.PrevPosition.Col].CellType = (int)Cell.Empty;
-            this.ViewModelCells[gameModel.Player.Position.Row * gameModel.MatrixSize + gameModel.Player.Position.Col].CellType = (int)Cell.Player;
+            this.ViewModelCells[gameModel.Player.PrevPosition.Row * gameModel.MatrixSize + gameModel.Player.PrevPosition.Col].CellType = Cell.Empty;
+            this.ViewModelCells[gameModel.Player.Position.Row * gameModel.MatrixSize + gameModel.Player.Position.Col].CellType = Cell.Player;
 
             OnPropertyChanged(nameof(ViewModelCells));
         }
-
-
-        ////*************************************************************************************************
-
-        //private async Task<bool> LoadGame()
-        //{
-
-        //    OpenFileDialog dialog = new OpenFileDialog();
-        //    dialog.DefaultExt = "json";
-
-        //    if (dialog.ShowDialog()!.Value)
-        //    {
-
-        //        GameModel loadedModel;
-        //        try
-        //        {
-        //            //loadedModel = await Persistance.LoadStateAsync(dialog.FileName);
-        //        }
-        //        catch (Exception)
-        //        {
-        //            MessageBox.Show("This save file is invalid or corrupted");
-        //            return false;
-        //        }
-
-
-
-        //        //CreateNewGame(gameModel: loadedModel);
-        //        return true;
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-
-        //}
-
-
-        ////**********************************************************************************************************
-        ////Events
-        ////**********************************************************************************************************
-
-        //private void NewGameBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    //SaveGameBtn.Visibility = Visibility.Visible;
-        //    //PauseBtn.Visibility = Visibility.Visible;
-        //    //MainMenu.Visibility = Visibility.Hidden;
-        //    //MainMenu.Background = null;
-        //    //MenuStackPanel.Background = Brushes.Gray;
-        //    //if (SmallBoardRadio.IsChecked!.Value)
-        //    //{
-        //    //    CreateNewGame(11, 7);
-        //    //}
-        //    //else if (MediumBoardRadio.IsChecked!.Value)
-        //    //{
-        //    //    CreateNewGame(15, 14);
-        //    //}
-        //    //else
-        //    //{
-        //    //    CreateNewGame(21, 21);
-        //    //}
-        //}
-
-
-
-
-
-
-
-
 
 
 
