@@ -1,27 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using Menekulj.Model;
-
-using System.Windows;
-using System.Windows.Input;
-
-
-using Microsoft.Win32;
-using System.ComponentModel;
 using ViewModel;
 
 namespace Menekulj.ViewModel
 {
     public class ViewModel : ViewModelBase
     {
-        private GameModel gameModel;
+        private GameModel? gameModel;
 
         private EventHandler gameOver;
-        //  public DelegateCommand ExitGameCommand { get; private set; }
         public DelegateCommand LoadGameCommand { get; private set; }
         public DelegateCommand? SaveGameCommand { get; private set; }
         public DelegateCommand NewGameCommand { get; private set; }
@@ -33,49 +20,54 @@ namespace Menekulj.ViewModel
 
         public DelegateCommand? StartGameCommand { get; private set; }
 
-        public ObservableCollection<ViewModelCell> ViewModelCells{ get; set;} = new ObservableCollection<ViewModelCell>();
+        public DelegateCommand? ChangeGameSizeCommand { get; private set; }
 
-        public byte MatrixSize { get => gameModel.MatrixSize; }
+        public ObservableCollection<ViewModelCell> ViewModelCells { get; set; } = new ObservableCollection<ViewModelCell>();
+
+        public byte MatrixSize { get => (GameIsCreated ? gameModel!.MatrixSize : (byte)0); }
         public bool GameIsCreated { get => gameModel is not null; }
-        public bool Running { get => gameModel.Running; }
-        public bool PlayerWon { get => gameModel.PlayerWon; }
+        public bool Running { get => (GameIsCreated ? gameModel!.Running : false); }
+        public bool PlayerWon { get => (GameIsCreated ? gameModel!.PlayerWon : false); }
+        public bool ShowMenu { get => showMenu; private set { showMenu = value; OnPropertyChanged(nameof(ShowMenu)); } }
 
-        public ViewModel( EventHandler gameOver)
+        private byte newGameSize = 11;
+        private uint newGameMineCount = 7;
+        private bool showMenu = true;
+        public ViewModel(EventHandler gameOver)
         {
-            this.gameModel = new GameModel(10, 10);
             NewGameCommand = new DelegateCommand(new Action<object?>(NewGame));
             LoadGameCommand = new DelegateCommand(new Action<object?>(LoadGame));
-
+            ChangeGameSizeCommand = new DelegateCommand(new Action<object?>(ChangeNewGameSize));
+            PauseCommand = new DelegateCommand(new Action<object?>(Pause));
+            ResumeCommand = new DelegateCommand(new Action<object?>(Resume));
+            SaveGameCommand = new DelegateCommand(new Action<object?>(SaveGame));
+            ChangeDirectionCommand = new DelegateCommand(new Action<object?>(ChangeDirection));
+            StartGameCommand = new DelegateCommand(new Action<object?>(StartGame));
             this.gameOver = gameOver;
-            this.ViewModelCells.Add(new ViewModelCell(0,0,-1));
+            this.ViewModelCells.Add(new ViewModelCell(0, 0, -1));
         }
 
 
-        private void BindCommandsToGameModel()
-        {
-
-            PauseCommand = new DelegateCommand((gameModel) => gameModel is not null, new Action<object?>(Pause));
-            ResumeCommand = new DelegateCommand((gameModel) => gameModel is not null, new Action<object?>(Resume));
-            SaveGameCommand = new DelegateCommand((gameModel) => gameModel is not null, new Action<object?>(SaveGame));
-            ChangeDirectionCommand = new DelegateCommand((gameModel) => gameModel is not null, new Action<object?>(ChangeDirection));
-            StartGameCommand = new DelegateCommand((gameModel) => gameModel is not null, new Action<object?>(StartGame));
-        }
 
         //****************************************************************************************
         //Actions
         private void Pause(object? obj)
         {
-            gameModel.Pause();
+            gameModel?.Pause();
+            ShowMenu = true;
         }
 
         private void Resume(object? obj)
         {
-            gameModel.Resume();
+            gameModel?.Resume();
+            ShowMenu = false;
         }
 
-        private void StartGame(object? obj)
+        private  void StartGame(object? obj)
         {
+            //   await this.gameModel.StartGame();
             _ = Task.Run(() => this.gameModel!.StartGame());
+            RefreshProperties();
 
         }
 
@@ -83,39 +75,36 @@ namespace Menekulj.ViewModel
         {
             if (obj is Direction)
             {
-                gameModel.ChangePlayerDirection((Direction)obj);
+                gameModel?.ChangePlayerDirection((Direction)obj);
             }
 
+        }
+
+        private void ChangeNewGameSize(object? obj)
+        {
+            if (obj is not null)
+            {
+                uint size;
+
+                if (uint.TryParse(obj!.ToString()!.Split(',')[0], out size) && uint.TryParse(obj!.ToString()!.Split(',')[1], out this.newGameMineCount))
+                {
+                    this.newGameSize = (byte)size;
+
+                }
+            }
         }
 
         private void NewGame(object? obj)
         {
-            if (obj is int[])
-            {
-                uint[] arr = (uint[])obj;
 
-                if (arr.Length < 2)
-                {
-                    throw new ArgumentException("The array is too short");
-                }
-                if (arr[0] >= 255)
-                {
-                    throw new ArgumentException("The map is too big");
-                }
-
-                CreateNewGame((byte)arr[0], arr[1]);
-            }
-            else if (gameModel is not null)
-            {
-                CreateNewGame(gameModel.MatrixSize, gameModel.MineCount);
-            }
+            CreateNewGame(newGameSize, newGameMineCount);
         }
 
         private void SaveGame(object? obj)
         {
-            if (obj is string)
+            if (obj is string && GameIsCreated)
             {
-                gameModel.SaveGame((string)obj).GetAwaiter();
+                gameModel!.SaveGame((string)obj).GetAwaiter();
             }
 
         }
@@ -135,6 +124,10 @@ namespace Menekulj.ViewModel
 
         //   Rectangle[,]? viewCells;
 
+        private void RefreshProperties()
+        {
+            OnPropertyChanged(nameof(ShowMenu));
+        }
 
 
         public Cell GetCell(int row, int col)
@@ -158,13 +151,11 @@ namespace Menekulj.ViewModel
             {
                 this.gameModel = new GameModel(boardSize, mineCount);
             }
-            //  CreateView();
-            BindCommandsToGameModel();
             this.gameModel!.UpdateView += UpdateUnits;
             this.gameModel!.GameOver += gameOver;
 
             this.ViewModelCells.Clear();
-         
+
             for (int i = 0; i < this.gameModel.MatrixSize; i++)
             {
                 for (int j = 0; j < this.gameModel.MatrixSize; j++)
@@ -174,11 +165,11 @@ namespace Menekulj.ViewModel
                     this.ViewModelCells.Add(vMCell);
                 }
             }
-
-
+            ShowMenu = false;
+            OnPropertyChanged(nameof(GameIsCreated));
         }
 
-   
+
 
         private void UpdateUnits(object? sender, EventArgs args)
         {
@@ -195,7 +186,7 @@ namespace Menekulj.ViewModel
             foreach (var enemy in gameModel.Enemies)
             {
 
-                this.ViewModelCells[enemy.PrevPosition.Row * gameModel.MatrixSize + enemy.PrevPosition.Col].CellType =Cell.Empty;
+                this.ViewModelCells[enemy.PrevPosition.Row * gameModel.MatrixSize + enemy.PrevPosition.Col].CellType = Cell.Empty;
                 if (!enemy.Dead)
                 {
                     this.ViewModelCells[enemy.Position.Row * gameModel.MatrixSize + enemy.Position.Col].CellType = Cell.Enemy;
@@ -206,12 +197,13 @@ namespace Menekulj.ViewModel
             this.ViewModelCells[gameModel.Player.Position.Row * gameModel.MatrixSize + gameModel.Player.Position.Col].CellType = Cell.Player;
 
             OnPropertyChanged(nameof(ViewModelCells));
+
         }
 
 
 
 
-     
+
 
 
 

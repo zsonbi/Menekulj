@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ViewModel.ViewModelCell">
+    <Position X="15.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIACAAAAAAAAAAAAAAAAAAAAAAEAAgAAABAAAACAAAA=</HashCode>
+      <FileName>ViewModelCell.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Menekulj.ViewModel.ViewModelBase">
+    <Position X="12" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewModelBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Menekulj.ViewModel.ViewModel">
+    <Position X="8.25" Y="2" Width="1.5" />
+    <InheritanceLine Type="Menekulj.ViewModel.ViewModelBase" FixedToPoint="true">
+      <Path>
+        <Point X="12.75" Y="2.247" />
+        <Point X="12.75" Y="3.09" />
+        <Point X="9.75" Y="3.09" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>QkFgAAABgAAwBAABAACAAAGwBAAQACCIAAIIAApBAIE=</HashCode>
+      <FileName>ViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ChangeDirectionCommand" />
+      <Property Name="ChangeGameSizeCommand" />
+      <Property Name="LoadGameCommand" />
+      <Property Name="PauseCommand" />
+      <Property Name="NewGameCommand" />
+      <Property Name="ResumeCommand" />
+      <Property Name="SaveGameCommand" />
+      <Property Name="StartGameCommand" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="ViewModelCells" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Menekulj.ViewModel.DelegateCommand">
+    <Position X="1.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAACAAQAAECAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DelegateCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

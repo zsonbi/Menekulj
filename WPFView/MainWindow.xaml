@@ -2,19 +2,20 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-     
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodel="clr-namespace:Menekulj.ViewModel;assembly=ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:ViewModel}"
         mc:Ignorable="d"
         Title="Menekulj" Height="800" Width="800" MinHeight="600px" MinWidth="400px" KeyDown="Window_KeyDown">
     <Window.Resources>
-        <Style TargetType="Button" >
-            <Setter Property="FontSize" Value="50"></Setter>
-            <Setter Property="Margin" Value="10"></Setter>
+
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <Style TargetType="{x:Type Button}" >
+            <Setter Property="FontSize" Value="50"/>
+            <Setter Property="Margin" Value="10"/>
         </Style>
-        <Style TargetType="RadioButton" >
-            <Setter Property="FontSize" Value="30"></Setter>
-            <Setter Property="Margin" Value="10,2"></Setter>
-            <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+        <Style TargetType="{x:Type RadioButton}" >
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="Margin" Value="10,2"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
 
         </Style>
     </Window.Resources>
@@ -36,7 +37,7 @@
             <ItemsControl Name="ItemControl" ItemsSource="{Binding ViewModelCells}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <UniformGrid Rows="{Binding ViewModel.MatrixSize}" Columns="{Binding ViewModel.MatrixSize}" x:Name="BoardGrid"/>
+                        <UniformGrid  x:Name="BoardGrid"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -102,7 +103,8 @@
 
 
         </Border>
-        <Grid Name="MainMenu" Grid.RowSpan="2">
+        <Grid Name="MainMenu" Grid.RowSpan="2" Visibility="{Binding ShowMenu,Converter={StaticResource BooleanToVisibilityConverter}}">
+
             <Grid.Background>
                 <ImageBrush ImageSource="./Images/mainmenubackground.jpg"></ImageBrush>
             </Grid.Background>
@@ -117,7 +119,7 @@
 
             <StackPanel Name="MenuStackPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">
 
-                <Button Content="Resume" Name="ResumeBtn" Click="ResumeBtn_Click" Visibility="Collapsed"/>
+                <Button Content="Resume" Name="ResumeBtn" Visibility="{Binding GameIsCreated,Converter={StaticResource BooleanToVisibilityConverter}}" Command="{Binding ResumeCommand}" IsEnabled="True"/>
 
                 <Button Content="New Game" Name="NewGameBtn" Click="NewGameBtn_Click"/>
 
@@ -125,23 +127,16 @@
 
                 <Button Content="Load Game" Name="LoadGameBtn" Click="LoadGameBtn_Click"/>
 
-
-
-
-                <RadioButton Content="Small map" Name="SmallBoardRadio" IsChecked="True" GroupName="mapSize"></RadioButton>
-                <RadioButton Content="Medium map" Name="MediumBoardRadio" GroupName="mapSize"></RadioButton>
-                <RadioButton Content="Big map" Name="BigBoardRadio" GroupName="mapSize"></RadioButton>
+                <RadioButton Content="Small map" Name="SmallBoardRadio" IsChecked="True" GroupName="mapSize"  Command="{Binding ChangeGameSizeCommand}" CommandParameter="11,7"></RadioButton>
+                <RadioButton Content="Medium map" Name="MediumBoardRadio" GroupName="mapSize" Command="{Binding ChangeGameSizeCommand}" CommandParameter="15,14"></RadioButton>
+                <RadioButton Content="Big map" Name="BigBoardRadio" GroupName="mapSize" Command="{Binding ChangeGameSizeCommand}" CommandParameter="21,21"></RadioButton>
 
                 <Button Content="Exit" Name="ExitBtn" Background="Red" Click="ExitBtn_Click"/>
 
             </StackPanel>
         </Grid>
 
-
-
-
-        <Button HorizontalAlignment="Right" Grid.Row="0" FontSize="25" Width="120" Name="PauseBtn" Visibility="Hidden" Content="Pause" Click="pauseBtn_Click"/>
-
+        <Button HorizontalAlignment="Right" Grid.Row="0" FontSize="25" Width="120" Name="PauseBtn" Visibility="{Binding GameIsCreated,Converter={StaticResource BooleanToVisibilityConverter}}" Content="Pause" Command="{Binding PauseCommand}" CommandParameter="" IsCancel="True"/>
 
     </Grid>
 </Window>

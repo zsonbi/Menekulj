@@ -46,7 +46,7 @@ namespace WPFView
             if (MessageBox.Show(message, "Result", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 Application.Current.Dispatcher.Invoke(() => {  
-                viewModel.NewGameCommand.Execute(sender);
+                viewModel.NewGameCommand.Execute(null);
                 viewModel.StartGameCommand?.Execute(null);
                 ItemControl.UpdateLayout();
                 });
@@ -98,24 +98,10 @@ namespace WPFView
 
         private void NewGameBtn_Click(object sender, RoutedEventArgs e)
         {
-            SaveGameBtn.Visibility = Visibility.Visible;
-            PauseBtn.Visibility = Visibility.Visible;
-            MainMenu.Visibility = Visibility.Hidden;
             MainMenu.Background = null;
-            MenuStackPanel.Background = Brushes.Gray;
-            if (SmallBoardRadio.IsChecked!.Value)
-            {
-                viewModel.NewGameCommand.Execute(new uint[] { 11, 7 });
-            }
-            else if (MediumBoardRadio.IsChecked!.Value)
-            {
-                viewModel.NewGameCommand.Execute(new uint[] { 15, 14 });
-            }
-            else
-            {
-                viewModel.NewGameCommand.Execute(new uint[] { 21, 21 });
-            }
-            ItemControl.UpdateLayout();
+            MenuStackPanel.Background = Brushes.DarkGray;
+
+            viewModel.NewGameCommand.Execute(null);
             viewModel.StartGameCommand?.Execute(null);
             
         }
@@ -182,47 +168,13 @@ namespace WPFView
 
         private async void LoadGameBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (await LoadGame())
-            {
-                PauseBtn.Visibility = Visibility.Visible;
-                SaveGameBtn.Visibility = Visibility.Visible;
-                MainMenu.Visibility = Visibility.Hidden;
-                MainMenu.Background = null;
-                MenuStackPanel.Background = Brushes.Gray;
-            }
+            MenuStackPanel.Background = Brushes.DarkGray;
+            MainMenu.Background = null;
 
+            await LoadGame();
         }
 
-        private void ResumeBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (!viewModel.GameIsCreated)
-            {
-                throw new NoGameCreatedException();
-            }
-
-            viewModel.ResumeCommand?.Execute(sender);
-            MainMenu.Visibility = Visibility.Hidden;
-        }
-
-
-        private void pauseBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (!viewModel.GameIsCreated)
-            {
-                throw new NoGameCreatedException();
-            }
-            if (!viewModel.Running)
-            {
-                ResumeBtn_Click(sender, e);
-                return;
-            }
-
-            ResumeBtn.Visibility = Visibility.Visible;
-
-            viewModel.PauseCommand?.Execute(sender);
-
-            MainMenu.Visibility = Visibility.Visible;
-        }
+      
 
 
         private void ExitBtn_Click(object sender, RoutedEventArgs e)
